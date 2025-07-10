@@ -42,8 +42,13 @@ export function MatchCard({ match }: MatchCardProps) {
         <Text style={styles.opponentClub}>{match.opponent.club}</Text>
         <Text style={styles.opponentRanking}>{match.opponent.ranking}</Text>
       </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.duration}>Duration: {match.duration}</Text>
+        <Text style={styles.aces}>Aces: {match.statistics.overall.aces}</Text>
+      </View>
     </TouchableOpacity>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
