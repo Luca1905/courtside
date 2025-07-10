@@ -25,7 +25,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="nativewind"
+        name="playground"
         options={{
           title: 'Playground',
           tabBarIcon: ({size, color}) => <Play size={size} color={color} />,

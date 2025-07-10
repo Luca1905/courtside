@@ -7,6 +7,7 @@ import * as React from 'react';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { ThemeToggle } from '~/components/ThemeToggle';
+import { PortalHost } from "@rn-primitives/portal";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -51,6 +52,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="+not-found" />
       </Stack>
+      <PortalHost />
     </ThemeProvider>
   );
 }
