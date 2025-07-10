@@ -40,7 +40,7 @@ export function MatchCard({ match }: MatchCardProps) {
       <View style={styles.opponentSection}>
         <Text style={styles.opponentName}>{match.opponent.name}</Text>
         <Text style={styles.opponentClub}>{match.opponent.club}</Text>
-        <Text style={styles.opponentRanking}>{match.opponent.ranking}</Text>
+        <Text style={styles.opponentRanking}>LK {match.opponent.ranking}</Text>
       </View>
 
       <View style={styles.footer}>
@@ -140,8 +140,9 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   opponentRanking: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#888888',
+    marginBottom: 2
   },
   matchInfo: {
     flexDirection: 'row',
