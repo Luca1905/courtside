@@ -7,7 +7,7 @@ export const mockMatches: Match[] = [
     opponent: {
       name: "Alex Johnson",
       club: "Riverside Tennis Club",
-      ranking: 1255
+      ranking: 12
     },
     venue: "Riverside Stadium",
     surface: "Hard",
