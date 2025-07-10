@@ -18,7 +18,7 @@ export interface StatsOverall {
   totalPoints: PointsSummary
 }
 
-export type Breakdown =  {
+export type Breakdown = {
   firstServe: number
   secondServe: number
   total: number
@@ -87,5 +87,8 @@ export interface Match {
   }
   statistics: {
     overall: StatsOverall
+    serve: ServeStats
+    return: ReturnStats
+    rally: RallyStats
   }
 }
