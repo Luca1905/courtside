@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { ClockFading } from 'lucide-react-native';
+import { ClockFading, Play } from 'lucide-react-native';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -22,6 +22,13 @@ export default function TabLayout() {
         options={{
           title: 'Matches',
           tabBarIcon: ({ size, color }) => <ClockFading size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="nativewind"
+        options={{
+          title: 'Playground',
+          tabBarIcon: ({size, color}) => <Play size={size} color={color} />,
         }}
       />
     </Tabs>

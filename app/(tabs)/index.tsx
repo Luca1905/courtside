@@ -4,7 +4,6 @@ import { mockMatches } from '@/data/mockMatches';
 import { MatchCard } from '@/components/MatchCard';
 
 export default function HomeScreen() {
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
