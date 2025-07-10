@@ -1,212 +1,152 @@
 import { Match } from "~/types/match";
-import { TrendingDown, Trophy } from "lucide-react-native";
-import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
+//TODO: create icons in lib/icons
+import { TrendingDown, Trophy, Clock } from "lucide-react-native";
+import { Calendar } from "~/lib/icons/Calendar";
+import { View } from "react-native";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "~/components/ui/card";
+import { Text } from "~/components/ui/text";
+import { Separator } from "~/components/ui/separator";
+import { cn } from "~/lib/utils";
 
 interface MatchCardProps {
   match: Match;
+  matchType?: "Singles" | "Doubles";
 }
 
-export function MatchCard({ match }: MatchCardProps) {
+export function MatchCard({ match, matchType = "Singles" }: MatchCardProps) {
+  const getSurfaceStyles = (surface: string) => {
+    switch (surface) {
+      case "Hard":
+        return "bg-blue-500";
+      case "Clay":
+        return "bg-amber-500";
+      case "Grass":
+        return "bg-green-500";
+      default:
+        return "bg-muted";
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
+
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.95}>
-      <View style={styles.header}>
-        <View style={styles.resultContainer}>
+    <Card className="w-full mx-4 my-2">
+      <CardHeader>
+        <View className="flex-row justify-between items-start mb-3">
+          <View className="flex-1">
+            <View className="flex-row items-center mb-2">
+              <Calendar size={12} className="text-muted-foreground m-2" />
+              <Text className="text-xs text-muted-foreground font-medium">
+                {formatDate(match.date)}
+              </Text>
+              <Separator orientation="vertical" className="m-2" />
+              <Text className="text-xs text-muted-foreground font-medium">
+                {matchType}
+              </Text>
+            </View>
+            <View
+              className={cn(
+                "flex-row items-center px-2.5 py-1.5 rounded-full self-start",
+                match.score.won ? "bg-green-500" : "bg-destructive"
+              )}
+            >
+              {match.score.won ? (
+                <Trophy size={14} color="#ffffff" />
+              ) : (
+                <TrendingDown size={14} color="#ffffff" />
+              )}
+              <Text className="text-primary-foreground text-xs font-bold ml-1.5 tracking-wider">
+                {match.score.won ? "Won" : "Lost"}
+              </Text>
+            </View>
+          </View>
           <View
-            style={[
-              styles.resultBadge,
-              match.score.won ? styles.wonBadge : styles.lostBadge,
-            ]}
-          >
-            {match.score.won ? (
-              <Trophy size={14} color="#ffffff" />
-            ) : (
-              <TrendingDown size={14} color="#ffffff" />
+            className={cn(
+              "px-2 py-1 rounded-lg",
+              getSurfaceStyles(match.surface)
             )}
-            <Text style={styles.resultText}>
-              {match.score.won ? "Won" : "Lost"}
+          >
+            <Text className="text-primary-foreground text-xs font-bold tracking-wider">
+              {match.surface}
             </Text>
           </View>
         </View>
-        <View
-          style={[
-            styles.surfaceBadge,
-            styles[`surface${match.surface}`],
-          ]}
-        >
-          <Text style={styles.surfaceText}>{match.surface}</Text>
-        </View>
-      </View>
+      </CardHeader>
 
-      <View style={styles.mainContent}>
-        <View style={styles.opponentSection}>
-          <View style={styles.nameRow}>
-            <Text style={styles.opponentName}>{match.opponent.name}</Text>
-            <Text style={styles.lkBadge}>LK {match.opponent.ranking}</Text>
+      <CardContent className="pt-0">
+        <View className="mb-4">
+          <View className="flex-row items-center mb-1.5">
+            <Text className="text-xl font-bold text-primary flex-1">
+              {match.opponent.name}
+            </Text>
+            <Text className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-xl ml-2">
+              LK {match.opponent.ranking}
+            </Text>
           </View>
-          <Text style={styles.opponentClub}>{match.opponent.club}</Text>
+          <Text className="text-sm text-muted-foreground font-medium">
+            {match.opponent.club}
+          </Text>
         </View>
 
-        <View style={styles.scoreSection}>
-          <Text style={styles.scoreLabel}>Score</Text>
-          <Text style={styles.score}>{match.score.sets.join("  ")}</Text>
+        <View className="items-center py-3 bg-muted/50 rounded-xl">
+          <Text className="text-xs text-muted-foreground font-semibold mb-1 tracking-wider">
+            Score
+          </Text>
+          <Text className="text-lg font-extrabold text-primary tracking-wide">
+            {match.score.sets.join("  ")}
+          </Text>
         </View>
-      </View>
+      </CardContent>
 
-      <View style={styles.footer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{match.duration}</Text>
-          <Text style={styles.statLabel}>Duration</Text>
+      <CardFooter className="pt-4 border-t border-border">
+        <View className="flex-row justify-around w-full">
+          <View className="items-center">
+            <View className="flex-row items-center mb-1">
+              <Clock size={12} className="text-muted-foreground mr-1" />
+              <Text className="text-base font-bold text-primary">
+                {formatDuration(match.duration)}
+              </Text>
+            </View>
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
+              Duration
+            </Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-base font-bold text-primary mb-0.5">
+              {match.statistics.overall.aces}
+            </Text>
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
+              Aces
+            </Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-base font-bold text-primary mb-0.5">
+              {match.statistics.overall.winners}
+            </Text>
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
+              Winners
+            </Text>
+          </View>
         </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{match.statistics.overall.aces}</Text>
-          <Text style={styles.statLabel}>Aces</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      </CardFooter>
+    </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 20,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: "#f5f5f5",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  resultContainer: {
-    flex: 1,
-  },
-  resultBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    alignSelf: "flex-start",
-  },
-  wonBadge: {
-    backgroundColor: "#10B981",
-  },
-  lostBadge: {
-    backgroundColor: "#EF4444",
-  },
-  resultText: {
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "700",
-    marginLeft: 5,
-    letterSpacing: 0.5,
-  },
-  surfaceBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    minWidth: 60,
-    alignItems: "center",
-  },
-  surfaceHard: {
-    backgroundColor: "#3B82F6",
-  },
-  surfaceClay: {
-    backgroundColor: "#F59E0B",
-  },
-  surfaceGrass: {
-    backgroundColor: "#22C55E",
-  },
-  surfaceText: {
-    color: "#ffffff",
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  mainContent: {
-    marginBottom: 20,
-  },
-  opponentSection: {
-    marginBottom: 16,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  opponentName: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1F2937",
-    flex: 1,
-  },
-  lkBadge: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#6B7280",
-    backgroundColor: "#F3F4F6",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginLeft: 8,
-  },
-  opponentClub: {
-    fontSize: 14,
-    color: "#6B7280",
-    fontWeight: "500",
-  },
-  scoreSection: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#F9FAFB",
-    borderRadius: 12,
-  },
-  scoreLabel: {
-    fontSize: 12,
-    color: "#6B7280",
-    fontWeight: "600",
-    marginBottom: 4,
-    letterSpacing: 0.5,
-  },
-  score: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#1F2937",
-    letterSpacing: 1,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 2,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: "#9CA3AF",
-    fontWeight: "600",
-    letterSpacing: 0.5,
-  },
-});
