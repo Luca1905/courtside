@@ -1,4 +1,4 @@
-import { useFrameworkReady } from '@/hooks/useFramworkReady';
+import { useFrameworkReady } from '~/hooks/useFramworkReady';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 

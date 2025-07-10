@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
 
-import { mockMatches } from '@/data/mockMatches';
-import { MatchCard } from '@/components/MatchCard';
+import { mockMatches } from '~/data/mockMatches';
+import { MatchCard } from '~/components/MatchCard';
 
 export default function HomeScreen() {
   return (

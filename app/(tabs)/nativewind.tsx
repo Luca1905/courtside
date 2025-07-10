@@ -1,4 +1,4 @@
-import "@/styles/global.css"
+import "~/styles/global.css"
 import { Text, View } from "react-native";
  
 export default function App() {

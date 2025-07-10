@@ -1,4 +1,4 @@
-import { Match } from "@/types/match";
+import { Match } from "~/types/match";
 import { TrendingDown, Trophy } from "lucide-react-native";
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 
