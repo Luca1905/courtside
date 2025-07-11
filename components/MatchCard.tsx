@@ -1,7 +1,8 @@
 import { Match } from "~/types/match";
-//TODO: create icons in lib/icons
-import { TrendingDown, Trophy, Clock } from "lucide-react-native";
 import { Calendar } from "~/lib/icons/Calendar";
+import { TrendingDown } from "~/lib/icons/TrendingDown";
+import { Trophy } from "~/lib/icons/Trophy";
+import { Clock } from "~/lib/icons/Clock";
 import { View } from "react-native";
 import {
   Card,
@@ -48,7 +49,7 @@ export function MatchCard({ match, matchType = "Singles" }: MatchCardProps) {
   };
 
   return (
-    <Card className="w-full mx-4 my-2">
+    <Card className="mx-4 my-2">
       <CardHeader>
         <View className="flex-row justify-between items-start mb-3">
           <View className="flex-1">

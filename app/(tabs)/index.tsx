@@ -1,13 +1,14 @@
-import { SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
+import { SafeAreaView, View, FlatList } from 'react-native';
+import { Text } from "~/components/ui/text";
 
 import { mockMatches } from '~/data/mockMatches';
 import { MatchCard } from '~/components/MatchCard';
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Match History</Text>
+    <SafeAreaView className="flex-1 bg-background">
+      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border" >
+        <Text className="text-3xl font-semibold text-foreground mb-1">Match History</Text>
       </View>
 
       <FlatList
@@ -16,7 +17,7 @@ export default function HomeScreen() {
           <MatchCard match={item} />
         )}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
+        className="pt-2 pb-24"
         showsVerticalScrollIndicator={false}
       />
 
@@ -24,62 +25,3 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#333333',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-  },
-  controls: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    gap: 12,
-  },
-  controlButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#f5f5f5',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    gap: 6,
-  },
-  controlButtonActive: {
-    backgroundColor: '#2D5016',
-    borderColor: '#2D5016',
-  },
-  controlButtonText: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  controlButtonTextActive: {
-    color: '#ffffff',
-  },
-  listContainer: {
-    paddingTop: 8,
-    paddingBottom: 100,
-  },
-});
