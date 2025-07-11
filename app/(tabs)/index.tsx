@@ -16,7 +16,7 @@ export default function HomeScreen() {
       <FlatList
         data={matches}
         renderItem={({ item }) => (
-          <MatchCard match={item} />
+          <MatchCard match={item} onPress={() => alert("what?")}/>
         )}
         keyExtractor={(item) => item._id}
         contentContainerClassName="pb-16"
