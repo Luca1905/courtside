@@ -9,6 +9,12 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { ThemeToggle } from '~/components/ThemeToggle';
 import { PortalHost } from "@rn-primitives/portal";
 
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+  unsavedChangesWarning: false,
+});
+
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
@@ -40,19 +46,21 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <Stack 
-        screenOptions={{ 
-          headerTitle: '',
-          headerBackTitle: 'Back',
-          headerRight: () => <ThemeToggle />,
-        }}
-      >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <PortalHost />
-    </ThemeProvider>
+    <ConvexProvider client={convex}>
+      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+        <Stack
+          screenOptions={{
+            headerTitle: '',
+            headerBackTitle: 'Back',
+            headerRight: () => <ThemeToggle />,
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <PortalHost />
+      </ThemeProvider>
+    </ConvexProvider>
   );
 }

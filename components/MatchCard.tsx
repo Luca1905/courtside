@@ -1,4 +1,3 @@
-import { Match } from "~/types/match";
 import { Calendar } from "~/lib/icons/Calendar";
 import { TrendingDown } from "~/lib/icons/TrendingDown";
 import { Trophy } from "~/lib/icons/Trophy";
@@ -13,13 +12,24 @@ import {
 import { Text } from "~/components/ui/text";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
+import { Doc } from "~/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
 interface MatchCardProps {
-  match: Match;
-  matchType?: "Singles" | "Doubles";
+  match: Doc<"matches">;
 }
 
-export function MatchCard({ match, matchType = "Singles" }: MatchCardProps) {
+export function MatchCard({ match }: MatchCardProps) {
+  const opponent = useQuery(
+    api.players.getById,
+    { playerId: match.opponentId }
+  );
+
+  if (!opponent) {
+    return null;
+  }
+
   const getSurfaceStyles = (surface: string) => {
     switch (surface) {
       case "Hard":
@@ -60,7 +70,7 @@ export function MatchCard({ match, matchType = "Singles" }: MatchCardProps) {
               </Text>
               <Separator orientation="vertical" className="m-2" />
               <Text className="text-xs text-muted-foreground font-medium">
-                {matchType}
+                {match.type}
               </Text>
             </View>
             <View
@@ -96,14 +106,14 @@ export function MatchCard({ match, matchType = "Singles" }: MatchCardProps) {
         <View className="mb-4">
           <View className="flex-row items-center mb-1.5">
             <Text className="text-xl font-bold text-primary flex-1">
-              {match.opponent.name}
+              {opponent.name}
             </Text>
             <Text className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-xl ml-2">
-              LK {match.opponent.ranking}
+              LK {opponent.ranking}
             </Text>
           </View>
           <Text className="text-sm text-muted-foreground font-medium">
-            {match.opponent.club}
+            {opponent.club}
           </Text>
         </View>
 
