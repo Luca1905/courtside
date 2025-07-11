@@ -19,11 +19,9 @@ export default function HomeScreen() {
           <MatchCard match={item} />
         )}
         keyExtractor={(item) => item._id}
-        className="pt-2 pb-24"
+        contentContainerClassName="pb-16"
         showsVerticalScrollIndicator={false}
       />
-
     </SafeAreaView>
   );
 }
-

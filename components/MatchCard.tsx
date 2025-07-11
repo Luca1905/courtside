@@ -2,6 +2,8 @@ import { Calendar } from "~/lib/icons/Calendar";
 import { TrendingDown } from "~/lib/icons/TrendingDown";
 import { Trophy } from "~/lib/icons/Trophy";
 import { Clock } from "~/lib/icons/Clock";
+import { CloudRain } from "~/lib/icons/CloudRain";
+import { Thermometer } from "~/lib/icons/Thermometer";
 import { View } from "react-native";
 import {
   Card,
@@ -60,15 +62,15 @@ export function MatchCard({ match }: MatchCardProps) {
 
   return (
     <Card className="mx-4 my-2">
-      <CardHeader>
-        <View className="flex-row justify-between items-start mb-3">
+      <CardHeader className="pb-3">
+        <View className="flex-row justify-between items-start">
           <View className="flex-1">
             <View className="flex-row items-center mb-2">
-              <Calendar size={12} className="text-muted-foreground m-2" />
+              <Calendar size={12} className="text-muted-foreground mr-2" />
               <Text className="text-xs text-muted-foreground font-medium">
                 {formatDate(match.date)}
               </Text>
-              <Separator orientation="vertical" className="m-2" />
+              <Separator orientation="vertical" className="mx-2" />
               <Text className="text-xs text-muted-foreground font-medium">
                 {match.type}
               </Text>
@@ -102,7 +104,7 @@ export function MatchCard({ match }: MatchCardProps) {
         </View>
       </CardHeader>
 
-      <CardContent className="pt-0">
+      <CardContent className="py-0">
         <View className="mb-4">
           <View className="flex-row items-center mb-1.5">
             <Text className="text-xl font-bold text-primary flex-1">
@@ -129,31 +131,37 @@ export function MatchCard({ match }: MatchCardProps) {
 
       <CardFooter className="pt-4 border-t border-border">
         <View className="flex-row justify-around w-full">
-          <View className="items-center">
+          <View className="items-center flex-1">
             <View className="flex-row items-center mb-1">
               <Clock size={12} className="text-muted-foreground mr-1" />
               <Text className="text-base font-bold text-primary">
                 {formatDuration(match.duration)}
               </Text>
             </View>
-            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider text-center">
               Duration
             </Text>
           </View>
-          <View className="items-center">
-            <Text className="text-base font-bold text-primary mb-0.5">
-              {match.statistics.overall.aces}
-            </Text>
-            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
-              Aces
+          <View className="items-center flex-1">
+            <View className="flex-row items-center mb-1">
+              <Thermometer size={12} className="text-muted-foreground mr-1" />
+              <Text className="text-base font-bold text-primary">
+                {match.weather?.temperature || 'N/A'}°C
+              </Text>
+            </View>
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider text-center">
+              Temperature
             </Text>
           </View>
-          <View className="items-center">
-            <Text className="text-base font-bold text-primary mb-0.5">
-              {match.statistics.overall.winners}
-            </Text>
-            <Text className="text-xs text-muted-foreground font-semibold tracking-wider">
-              Winners
+          <View className="items-center flex-1">
+            <View className="flex-row items-center mb-1">
+              <CloudRain size={12} className="text-muted-foreground mr-1" />
+              <Text className="text-base font-bold text-primary">
+                {match.weather?.humidity || 'N/A'}%
+              </Text>
+            </View>
+            <Text className="text-xs text-muted-foreground font-semibold tracking-wider text-center">
+              Humidity
             </Text>
           </View>
         </View>
