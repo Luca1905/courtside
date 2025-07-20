@@ -8,7 +8,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          position: "absolute" 
+          position: "absolute"
         },
         tabBarActiveTintColor: '#ff0000',
         tabBarInactiveTintColor: '#888888',
@@ -28,7 +28,13 @@ export default function TabLayout() {
         name="playground"
         options={{
           title: 'Playground',
-          tabBarIcon: ({size, color}) => <Play size={size} color={color} />,
+          tabBarIcon: ({ size, color }) => <Play size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="match/[id]"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

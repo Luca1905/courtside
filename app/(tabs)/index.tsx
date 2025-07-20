@@ -7,6 +7,7 @@ import { api } from '~/convex/_generated/api';
 
 export default function HomeScreen() {
   const matches = useQuery(api.matches.get);
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border" >
@@ -16,7 +17,7 @@ export default function HomeScreen() {
       <FlatList
         data={matches}
         renderItem={({ item }) => (
-          <MatchCard match={item} onPress={() => alert("what?")}/>
+          <MatchCard match={item} />
         )}
         keyExtractor={(item) => item._id}
         contentContainerClassName="pb-16"

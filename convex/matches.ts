@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 export const get = query({
   args: {},
@@ -32,23 +33,27 @@ export const getByDate = query({
   },
 })
 
+export type MatchWithOpponent = Doc<"matches"> & {
+  opponent: Doc<"players">;
+};
+
 export const getMatchWithOpponent = query({
   args: {
     matchId: v.id("matches"),
   },
-  handler: async (ctx, { matchId }) => {
+  handler: async (ctx, { matchId }): Promise<MatchWithOpponent | null> => {
     const match = await ctx.db
-        .query("matches")
-        .withIndex("by_id", (q) => q.eq("_id", matchId))
-        .first();
+      .query("matches")
+      .withIndex("by_id", (q) => q.eq("_id", matchId))
+      .first();
     if (!match) return null;
     const opponent = await ctx.db
-        .query("players")
-        .withIndex("by_id", (q) => q.eq("_id", match.opponentId))
-        .first();
+      .query("players")
+      .withIndex("by_id", (q) => q.eq("_id", match.opponentId))
+      .first();
     if (!opponent) return null;
     return {
-      match,
+      ...match,
       opponent: opponent
     }
   }
