@@ -1,17 +1,17 @@
+import { useQuery } from "convex/react";
+import { Pressable, View } from "react-native";
+import { Card } from "~/components/ui/card";
+import { Separator } from "~/components/ui/separator";
+import { Text } from "~/components/ui/text";
+import { api } from "~/convex/_generated/api";
+import type { Doc } from "~/convex/_generated/dataModel";
 import { Calendar } from "~/lib/icons/Calendar";
-import { TrendingDown } from "~/lib/icons/TrendingDown";
-import { Trophy } from "~/lib/icons/Trophy";
 import { Clock } from "~/lib/icons/Clock";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Thermometer } from "~/lib/icons/Thermometer";
-import { Pressable, View } from "react-native";
-import { Card } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
-import { Separator } from "~/components/ui/separator";
+import { TrendingDown } from "~/lib/icons/TrendingDown";
+import { Trophy } from "~/lib/icons/Trophy";
 import { cn } from "~/lib/utils";
-import { Doc } from "~/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "~/convex/_generated/api";
 import { Badge } from "./ui/badge";
 
 interface MatchCardProps {
