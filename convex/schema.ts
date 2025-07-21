@@ -93,7 +93,17 @@ export default defineSchema({
 
   players: defineTable({
     name: v.string(),
-    club: v.string(),
-    ranking: v.number(),
+    club: v.optional(v.string()),
+    ranking: v.optional(v.number()),
+    hittingArm: v.optional(
+      v.union(
+        v.literal("Right"),
+        v.literal("Left"),
+      )),
+    backhandGrip: v.optional(
+      v.union(
+        v.literal("Two-Handed"),
+        v.literal("One-Handed"),
+      )),
   }),
 });
