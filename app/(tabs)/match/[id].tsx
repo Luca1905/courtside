@@ -22,6 +22,7 @@ import { CloudRain } from "~/lib/icons/CloudRain";
 import { Droplets } from "~/lib/icons/Droplets";
 import { formatDate, formatDuration, formatTime } from "~/lib/match";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { MatchScreenSkeleton } from "./_skeleton";
 
 export default function MatchScreen() {
   const router = useRouter();
@@ -37,11 +38,7 @@ export default function MatchScreen() {
 
   // Loading state
   if (match === undefined) {
-    return (
-      <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-        <Text className="text-base text-gray-500">Loading…</Text>
-      </SafeAreaView>
-    );
+    return <MatchScreenSkeleton />
   }
 
   // No match found
