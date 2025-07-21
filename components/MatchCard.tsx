@@ -14,7 +14,6 @@ import { Trophy } from "~/lib/icons/Trophy";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import { Link } from "expo-router";
-import { surfaceColors } from "~/lib/colors";
 
 interface MatchCardProps {
   match: Doc<"matches">;
@@ -91,7 +90,9 @@ export function MatchCard({ match }: MatchCardProps) {
                   <Badge
                     className={cn(
                       "px-2 py-1 rounded-full",
-                      surfaceColors[match.surface] ?? "bg-muted",
+                      match.surface === "Hard" && "bg-blue-500",
+                      match.surface === "Clay" && "bg-amber-500",
+                      match.surface === "Grass" && "bg-green-500",
                     )}
                   >
                     <Text className="text-2xs font-bold text-white tracking-wide">
