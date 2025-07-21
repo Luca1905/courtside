@@ -9,11 +9,10 @@ import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Thermometer } from "~/lib/icons/Thermometer";
-import { TrendingDown } from "~/lib/icons/TrendingDown";
-import { Trophy } from "~/lib/icons/Trophy";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import { Link } from "expo-router";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface MatchCardProps {
   match: Doc<"matches">;
@@ -39,154 +38,172 @@ export function MatchCard({ match }: MatchCardProps) {
   const won = match.score.won;
 
   return (
-    <Link href={{
-      pathname: "/match/[id]",
-      params: {
-        id: match._id,
-      }
-    }} asChild prefetch>
+    <Link
+      href={{
+        pathname: "/match/[id]",
+        params: { id: match._id },
+      }}
+      asChild
+      prefetch
+    >
       <Pressable className="mx-3 my-2">
         <Card className="overflow-hidden rounded-2xl bg-card shadow-md">
-          <View className="flex-row">
-            {/* Side bar for win/loss */}
-            <View
-              className={cn("w-1.5", won ? "bg-green-600" : "bg-destructive")}
-            />
+          {/* Win/Loss Banner */}
+          <View
+            className={cn(
+              "absolute top-0 left-0 right-0 h-1.5",
+              won ? "bg-green-500" : "bg-red-500"
+            )}
+          />
 
-            <View className="flex-1">
-              {/* Header: Date, Type, and Result Badges */}
-              <View className="flex-row justify-between items-start p-4 pb-3">
-                <View className="flex-row items-center">
-                  <Calendar
-                    size={12}
-                    className="text-muted-foreground mr-1.5"
-                  />
-                  <Text className="text-xs font-medium text-muted-foreground">
-                    {formatDate(match.date)}
-                  </Text>
-                  <Separator orientation="vertical" className="mx-2 h-3" />
-                  <Text className="text-xs font-medium text-muted-foreground">
-                    {match.type}
-                  </Text>
-                </View>
-
-                {/* Result and Surface Badges */}
-                <View className="flex-row items-center gap-2">
-                  <Badge
-                    className={cn(
-                      "flex-row items-center gap-1 px-2 py-1 rounded-full",
-                      won ? "bg-green-500" : "bg-destructive",
-                    )}
-                  >
-                    {won ? (
-                      <Trophy size={10} color="#fff" />
-                    ) : (
-                      <TrendingDown size={10} color="#fff" />
-                    )}
-                    <Text className="text-2xs font-bold text-white tracking-wide">
-                      {won ? "WON" : "LOST"}
-                    </Text>
-                  </Badge>
-                  <Badge
-                    className={cn(
-                      "px-2 py-1 rounded-full",
-                      match.surface === "Hard" && "bg-blue-500",
-                      match.surface === "Clay" && "bg-amber-500",
-                      match.surface === "Grass" && "bg-green-500",
-                    )}
-                  >
-                    <Text className="text-2xs font-bold text-white tracking-wide">
-                      {match.surface}
-                    </Text>
-                  </Badge>
-                </View>
+          <View className="pt-3">
+            {/* Header: Date and Type */}
+            <View className="flex-row justify-between items-start px-4 pb-3">
+              <View className="flex-row items-center">
+                <Calendar size={12} className="text-muted-foreground mr-1.5" />
+                <Text className="text-xs font-medium text-muted-foreground">
+                  {formatDate(match.date)}
+                </Text>
+                <Separator orientation="vertical" className="mx-2 h-3" />
+                <Text className="text-xs font-medium text-muted-foreground">
+                  {match.type}
+                </Text>
               </View>
 
-              {/* Opponent Info and Score */}
-              <View className="px-4 pb-4">
-                <View className="flex-row justify-between items-start">
-                  <View className="flex-1 mr-4">
-                    <Text className="text-xs font-medium text-muted-foreground mb-1">
-                      OPPONENT
+              {/* Surface Badge */}
+              <Badge
+                className={cn(
+                  "px-3 py-1.5 rounded-full flex-row items-center gap-1.5",
+                  match.surface === "Hard" &&
+                    "bg-[#3B82F6]/10 border border-[#3B82F6]/30",
+                  match.surface === "Clay" &&
+                    "bg-[#D97706]/10 border border-[#D97706]/30",
+                  match.surface === "Grass" &&
+                    "bg-[#15803D]/10 border border-[#15803D]/30"
+                )}
+              >
+                <MaterialCommunityIcons
+                  name={
+                    match.surface === "Hard"
+                      ? "grid"
+                      : match.surface === "Clay"
+                      ? "dots-grid"
+                      : "grass"
+                  }
+                  size={12}
+                  color={
+                    match.surface === "Hard"
+                      ? "#3B82F6"
+                      : match.surface === "Clay"
+                      ? "#D97706"
+                      : "#15803D"
+                  }
+                />
+                <Text
+                  className={cn(
+                    "text-xs font-medium",
+                    match.surface === "Hard" && "text-[#3B82F6]",
+                    match.surface === "Clay" && "text-[#D97706]",
+                    match.surface === "Grass" && "text-[#15803D]"
+                  )}
+                >
+                  {match.surface}
+                </Text>
+              </Badge>
+            </View>
+
+            {/* Opponent Info and Score */}
+            <View className="px-4 pb-4">
+              <View className="flex-row justify-between items-start">
+                <View className="flex-1 mr-4">
+                  <Text className="text-xs font-medium text-muted-foreground mb-1">
+                    OPPONENT
+                  </Text>
+                  <Text className="text-xl font-extrabold text-primary mb-1">
+                    {opponent.name}
+                  </Text>
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-sm font-medium text-muted-foreground">
+                      {opponent.club}
                     </Text>
-                    <Text className="text-xl font-extrabold text-primary mb-1">
-                      {opponent.name}
-                    </Text>
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-sm font-medium text-muted-foreground">
-                        {opponent.club}
+                    <Badge className="bg-muted px-2 py-0.5 rounded-lg">
+                      <Text className="text-2xs font-semibold text-muted-foreground">
+                        LK {opponent.ranking}
                       </Text>
-                      <Badge className="bg-muted px-2 py-0.5 rounded-lg">
-                        <Text className="text-2xs font-semibold text-muted-foreground">
-                          LK {opponent.ranking}
-                        </Text>
-                      </Badge>
-                    </View>
+                    </Badge>
                   </View>
+                </View>
 
-                  {/* Score Display */}
-                  <View className="bg-muted/40 rounded-xl py-3 px-4 items-center min-w-[80px]">
-                    <Text className="text-2xs font-semibold text-muted-foreground mb-1">
-                      SCORE
+                {/* Score Display */}
+                <View>
+                  <Text
+                    className={cn(
+                      "text-3xl font-black",
+                      won ? "text-green-700" : "text-red-700"
+                    )}
+                  >
+                    {match.score.sets.join(" ")}
+                  </Text>
+                  <Text
+                    className={cn(
+                      "text-sm font-semibold mt-1",
+                      won ? "text-green-600" : "text-red-600"
+                    )}
+                  >
+                    {won ? "Victory" : "Defeat"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Footer */}
+            <View className="border-t border-border/50 bg-muted/20 px-4 py-3">
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row items-center">
+                  <Clock size={14} className="text-muted-foreground mr-2" />
+                  <View>
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Duration
                     </Text>
-                    <Text className="text-lg font-extrabold text-primary tracking-wider">
-                      {match.score.sets.join(" / ")}
+                    <Text className="text-sm font-semibold text-foreground">
+                      {formatDuration(match.duration)}
                     </Text>
                   </View>
                 </View>
-              </View>
 
-              {/* Footer */}
-              <View className="border-t border-border/50 bg-muted/20 px-4 py-3">
-                <View className="flex-row justify-between items-center">
+                {/* Weather Stats */}
+                <View className="flex-row gap-6">
                   <View className="flex-row items-center">
-                    <Clock size={14} className="text-muted-foreground mr-2" />
+                    <Thermometer
+                      size={14}
+                      className="text-muted-foreground mr-2"
+                    />
                     <View>
                       <Text className="text-2xs font-medium text-muted-foreground">
-                        Duration
+                        Temp
                       </Text>
                       <Text className="text-sm font-semibold text-foreground">
-                        {formatDuration(match.duration)}
+                        {match.weather?.temperature
+                          ? `${match.weather.temperature}°C`
+                          : "N/A"}
                       </Text>
                     </View>
                   </View>
 
-                  {/* Weather Stats */}
-                  <View className="flex-row gap-6">
-                    {/* Temperature */}
-                    <View className="flex-row items-center">
-                      <Thermometer
-                        size={14}
-                        className="text-muted-foreground mr-2"
-                      />
-                      <View>
-                        <Text className="text-2xs font-medium text-muted-foreground">
-                          Temp
-                        </Text>
-                        <Text className="text-sm font-semibold text-foreground">
-                          {match.weather?.temperature
-                            ? `${match.weather.temperature}°C`
-                            : "N/A"}
-                        </Text>
-                      </View>
-                    </View>
-
-                    {/* Humidity */}
-                    <View className="flex-row items-center">
-                      <CloudRain
-                        size={14}
-                        className="text-muted-foreground mr-2"
-                      />
-                      <View>
-                        <Text className="text-2xs font-medium text-muted-foreground">
-                          Humidity
-                        </Text>
-                        <Text className="text-sm font-semibold text-foreground">
-                          {match.weather?.humidity
-                            ? `${match.weather.humidity}%`
-                            : "N/A"}
-                        </Text>
-                      </View>
+                  <View className="flex-row items-center">
+                    <CloudRain
+                      size={14}
+                      className="text-muted-foreground mr-2"
+                    />
+                    <View>
+                      <Text className="text-2xs font-medium text-muted-foreground">
+                        Humidity
+                      </Text>
+                      <Text className="text-sm font-semibold text-foreground">
+                        {match.weather?.humidity
+                          ? `${match.weather.humidity}%`
+                          : "N/A"}
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -194,7 +211,7 @@ export function MatchCard({ match }: MatchCardProps) {
             </View>
           </View>
         </Card>
-      </Pressable >
+      </Pressable>
     </Link>
   );
 }
