@@ -22,7 +22,7 @@ import { CloudRain } from "~/lib/icons/CloudRain";
 import { Droplets } from "~/lib/icons/Droplets";
 import { formatDate, formatDuration, formatTime } from "~/lib/match";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { MatchScreenSkeleton } from "./_skeleton";
+import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 
 export default function MatchScreen() {
   const router = useRouter();

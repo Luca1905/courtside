@@ -1,7 +1,8 @@
 import { SafeAreaView, ScrollView, View } from "react-native";
 import { Card } from "~/components/ui/card";
 
-export function MatchScreenSkeleton() {
+//TODO: create reusable component for each skeleton
+export default function MatchScreenSkeleton() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       {/* Header Skeleton */}

@@ -5,8 +5,15 @@ import { MatchCard } from '~/components/MatchCard';
 import { useQuery } from 'convex/react';
 import { api } from '~/convex/_generated/api';
 
+import HomeScreenSkeleton from '~/components/HomeScreenSkeleton';
+
 export default function HomeScreen() {
   const matches = useQuery(api.matches.get);
+
+  // Loading state
+  if (matches === undefined) {
+    return <HomeScreenSkeleton />;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">
