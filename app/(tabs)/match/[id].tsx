@@ -1,11 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "convex/react";
-import {
-  SafeAreaView,
-  View,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { SafeAreaView, View, Pressable, ScrollView } from "react-native";
 import { Card } from "~/components/ui/card";
 import { Text } from "~/components/ui/text";
 import { Badge } from "~/components/ui/badge";
@@ -21,24 +16,25 @@ import { Wind } from "~/lib/icons/Wind";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Droplets } from "~/lib/icons/Droplets";
 import { formatDate, formatDuration, formatTime } from "~/lib/match";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 
 export default function MatchScreen() {
   const router = useRouter();
   const { id: matchId } = useLocalSearchParams();
 
-  const match = useQuery(api.matches.getMatchWithOpponent,
-    typeof matchId === "string" ?
-      {
-        matchId: matchId as Id<"matches">,
-      }
-      : "skip"
+  const match = useQuery(
+    api.matches.getMatchWithOpponent,
+    typeof matchId === "string"
+      ? {
+          matchId: matchId as Id<"matches">,
+        }
+      : "skip",
   );
 
   // Loading state
   if (match === undefined) {
-    return <MatchScreenSkeleton />
+    return <MatchScreenSkeleton />;
   }
 
   // No match found
@@ -79,7 +75,7 @@ export default function MatchScreen() {
             <View
               className={cn(
                 "absolute top-0 left-0 right-0 h-1.5 rounded-t-lg",
-                match.score.won ? "bg-green-500" : "bg-red-500"
+                match.score.won ? "bg-green-500" : "bg-red-500",
               )}
             />
             <View className="flex-row justify-between items-center">
@@ -88,7 +84,7 @@ export default function MatchScreen() {
                 <Text
                   className={cn(
                     "text-3xl font-black",
-                    match.score.won ? "text-green-700" : "text-red-700"
+                    match.score.won ? "text-green-700" : "text-red-700",
                   )}
                 >
                   {match.score.sets.join(" ")}
@@ -96,7 +92,7 @@ export default function MatchScreen() {
                 <Text
                   className={cn(
                     "text-sm font-semibold mt-1",
-                    match.score.won ? "text-green-600" : "text-red-600"
+                    match.score.won ? "text-green-600" : "text-red-600",
                   )}
                 >
                   {match.score.won ? "Victory" : "Defeat"}
@@ -106,9 +102,12 @@ export default function MatchScreen() {
               <Badge
                 className={cn(
                   "px-3 py-1.5 rounded-full flex-row items-center gap-1.5",
-                  match.surface === "Hard" && "bg-[#3B82F6]/10 border border-[#3B82F6]/30",
-                  match.surface === "Clay" && "bg-[#D97706]/10 border border-[#D97706]/30",
-                  match.surface === "Grass" && "bg-[#15803D]/10 border border-[#15803D]/30"
+                  match.surface === "Hard" &&
+                    "bg-[#3B82F6]/10 border border-[#3B82F6]/30",
+                  match.surface === "Clay" &&
+                    "bg-[#D97706]/10 border border-[#D97706]/30",
+                  match.surface === "Grass" &&
+                    "bg-[#15803D]/10 border border-[#15803D]/30",
                 )}
               >
                 {/* Icons */}
@@ -138,7 +137,7 @@ export default function MatchScreen() {
                     "text-xs font-medium",
                     match.surface === "Hard" && "text-[#3B82F6]",
                     match.surface === "Clay" && "text-[#D97706]",
-                    match.surface === "Grass" && "text-[#15803D]"
+                    match.surface === "Grass" && "text-[#15803D]",
                   )}
                 >
                   {match.surface}

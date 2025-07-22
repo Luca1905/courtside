@@ -12,7 +12,7 @@ import { Thermometer } from "~/lib/icons/Thermometer";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import { Link } from "expo-router";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 interface MatchCardProps {
   match: Doc<"matches">;
@@ -52,7 +52,7 @@ export function MatchCard({ match }: MatchCardProps) {
           <View
             className={cn(
               "absolute top-0 left-0 right-0 h-1.5",
-              won ? "bg-green-500" : "bg-red-500"
+              won ? "bg-green-500" : "bg-red-500",
             )}
           />
 
@@ -79,7 +79,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   match.surface === "Clay" &&
                     "bg-[#D97706]/10 border border-[#D97706]/30",
                   match.surface === "Grass" &&
-                    "bg-[#15803D]/10 border border-[#15803D]/30"
+                    "bg-[#15803D]/10 border border-[#15803D]/30",
                 )}
               >
                 <MaterialCommunityIcons
@@ -87,16 +87,16 @@ export function MatchCard({ match }: MatchCardProps) {
                     match.surface === "Hard"
                       ? "grid"
                       : match.surface === "Clay"
-                      ? "dots-grid"
-                      : "grass"
+                        ? "dots-grid"
+                        : "grass"
                   }
                   size={12}
                   color={
                     match.surface === "Hard"
                       ? "#3B82F6"
                       : match.surface === "Clay"
-                      ? "#D97706"
-                      : "#15803D"
+                        ? "#D97706"
+                        : "#15803D"
                   }
                 />
                 <Text
@@ -104,7 +104,7 @@ export function MatchCard({ match }: MatchCardProps) {
                     "text-xs font-medium",
                     match.surface === "Hard" && "text-[#3B82F6]",
                     match.surface === "Clay" && "text-[#D97706]",
-                    match.surface === "Grass" && "text-[#15803D]"
+                    match.surface === "Grass" && "text-[#15803D]",
                   )}
                 >
                   {match.surface}
@@ -139,7 +139,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   <Text
                     className={cn(
                       "text-3xl font-black",
-                      won ? "text-green-700" : "text-red-700"
+                      won ? "text-green-700" : "text-red-700",
                     )}
                   >
                     {match.score.sets.join(" ")}
@@ -147,7 +147,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   <Text
                     className={cn(
                       "text-sm font-semibold mt-1",
-                      won ? "text-green-600" : "text-red-600"
+                      won ? "text-green-600" : "text-red-600",
                     )}
                   >
                     {won ? "Victory" : "Defeat"}

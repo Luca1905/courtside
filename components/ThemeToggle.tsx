@@ -1,22 +1,22 @@
 import { Pressable, View } from "react-native";
 import { MoonStar } from "~/lib/icons/MoonStar";
 import { Sun } from "~/lib/icons/Sun";
-import { useColorScheme } from "~/lib/useColorScheme"
+import { useColorScheme } from "~/lib/useColorScheme";
 
 export function ThemeToggle() {
   const { isDarkColorScheme, setColorScheme } = useColorScheme();
 
   const toggleColorScheme = () => {
-    const newTheme = isDarkColorScheme ? 'light' : 'dark';
+    const newTheme = isDarkColorScheme ? "light" : "dark";
     setColorScheme(newTheme);
-  }
+  };
 
   return (
     <Pressable
       onPress={toggleColorScheme}
-      className='web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 active:opacity-70'
+      className="web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 active:opacity-70"
     >
-      <View className='flex-1 aspect-square pt-0.5 justify-center items-start web:px-5'>
+      <View className="flex-1 aspect-square pt-0.5 justify-center items-start web:px-5">
         {isDarkColorScheme ? (
           <MoonStar className="text-foreground" size={24} strokeWidth={1.25} />
         ) : (
@@ -24,5 +24,5 @@ export function ThemeToggle() {
         )}
       </View>
     </Pressable>
-  )
+  );
 }

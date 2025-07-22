@@ -9,10 +9,9 @@ import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 
 function PlayerListItem({ player }: { player: Doc<"players"> }) {
-  const matchResults = useQuery(
-    api.players.getResultForPlayer,
-    { playerId: player._id }
-  );
+  const matchResults = useQuery(api.players.getResultForPlayer, {
+    playerId: player._id,
+  });
 
   return <PlayerCard player={player} matchResults={matchResults} />;
 }
@@ -24,9 +23,10 @@ export default function PlayersPage() {
 
   if (!players) return <View />;
 
-  const filteredPlayers = players.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.club?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPlayers = players.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.club?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const onRefresh = () => {
@@ -36,8 +36,10 @@ export default function PlayersPage() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border" >
-        <Text className="text-3xl font-semibold text-foreground mb-1">Players</Text>
+      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border">
+        <Text className="text-3xl font-semibold text-foreground mb-1">
+          Players
+        </Text>
       </View>
       <FlatList
         data={filteredPlayers}

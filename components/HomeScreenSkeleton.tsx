@@ -5,9 +5,7 @@ export default function HomeScreenSkeleton() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       {/* Header Skeleton */}
-      <View
-        className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border"
-      >
+      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border">
         <View className="h-8 w-48 bg-muted rounded mb-1" />
       </View>
 

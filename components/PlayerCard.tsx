@@ -59,7 +59,9 @@ export function PlayerCard({ player, matchResults }: PlayerCardProps) {
                       color="#64748b"
                     />
                     <Text className="text-sm text-muted-foreground">
-                      {player.hittingArm === "Right" ? "Right-handed" : "Left-handed"}
+                      {player.hittingArm === "Right"
+                        ? "Right-handed"
+                        : "Left-handed"}
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-2">
@@ -81,13 +83,17 @@ export function PlayerCard({ player, matchResults }: PlayerCardProps) {
                       <Text className="text-2xl font-bold text-green-600">
                         {matchResults.wins}
                       </Text>
-                      <Text className="text-xs text-muted-foreground">Wins</Text>
+                      <Text className="text-xs text-muted-foreground">
+                        Wins
+                      </Text>
                     </View>
                     <View className="items-center">
                       <Text className="text-2xl font-bold text-red-600">
                         {matchResults.losses}
                       </Text>
-                      <Text className="text-xs text-muted-foreground">Losses</Text>
+                      <Text className="text-xs text-muted-foreground">
+                        Losses
+                      </Text>
                     </View>
                   </View>
                 )}
