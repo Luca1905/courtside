@@ -8,10 +8,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "lint:fix":"expo lint --fix",
+    "lint:fix": "expo lint --fix",
     "typecheck": "tsc --noEmit",
     "backend:dev": "bunx convex dev",
-    "backend:deploy": "bunx convex deploy"
+    "backend:deploy": "bunx convex deploy",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -60,10 +61,15 @@
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
+  }
 }
