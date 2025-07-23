@@ -36,5 +36,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# app specific
 app-example
 .env
+.eslintcache
