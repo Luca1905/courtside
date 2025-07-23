@@ -27,12 +27,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="match/[id]"
-        options={{
-          href: null,
-        }}
-      />
     </Tabs>
   );
 }

@@ -35,16 +35,10 @@ export default function PlayersPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border">
-        <Text className="text-3xl font-semibold text-foreground mb-1">
-          Players
-        </Text>
-      </View>
+    <SafeAreaView className="flex-1 bg-background mt-4">
       <FlatList
         data={filteredPlayers}
         keyExtractor={(item) => item._id}
-        contentContainerStyle={{ paddingVertical: 8 }}
         ListHeaderComponent={
           <View className="px-3 mb-2">
             <View className="relative">

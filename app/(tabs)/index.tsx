@@ -33,13 +33,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="px-5 pt-5 pb-4 bg-background border-b-[1px] border-b-border">
-        <Text className="text-3xl font-semibold text-foreground mb-1">
-          Match History
-        </Text>
-      </View>
-
+    <SafeAreaView className="flex-1 bg-background mt-4">
       <FlatList
         data={filteredMatches}
         keyExtractor={(item) => item._id}

@@ -1,15 +1,17 @@
-import { Link, Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function NotFoundScreen() {
+  const router = useRouter();
+
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
       <View style={styles.container}>
         <Text style={styles.text}>This screen doesn&apos;t exist.</Text>
-        <Link href="/" style={styles.link}>
+        <Pressable onPress={() => router.dismissTo("/")} style={styles.link}>
           <Text>Go to home screen!</Text>
-        </Link>
+        </Pressable>
       </View>
     </>
   );

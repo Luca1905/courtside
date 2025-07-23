@@ -7,7 +7,6 @@ import { Badge } from "~/components/ui/badge";
 import { api } from "~/convex/_generated/api";
 import type { Id } from "~/convex/_generated/dataModel";
 import { cn } from "~/lib/utils";
-import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { MapPin } from "~/lib/icons/MapPin";
@@ -54,16 +53,6 @@ export default function MatchScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      {/* Header */}
-      <View className="flex-row items-center px-4 py-3 bg-card border-b border-border">
-        <Pressable onPress={() => router.back()} className="p-1 mr-4">
-          <ArrowLeft size={24} className="text-foreground" />
-        </Pressable>
-        <Text className="text-lg font-semibold text-foreground">
-          Match Details
-        </Text>
-      </View>
-
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
