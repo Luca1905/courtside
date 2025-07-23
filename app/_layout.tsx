@@ -5,6 +5,7 @@ import {
   ThemeProvider,
   DefaultTheme,
   DarkTheme,
+  getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -61,11 +62,27 @@ export default function RootLayout() {
             headerRight: () => <ThemeToggle />,
           }}
         >
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            name="(tabs)"
+            options={({ route }) => {
+              // if no tab is focused yet, default to index
+              const focused = getFocusedRouteNameFromRoute(route) || "index";
+
+              const titles: Record<string, string> = {
+                index: "Matches",
+                players: "Players",
+              };
+
+              return {
+                headerShown: true,
+                headerTitle: titles[focused] ?? "",
+              };
+            }}
+          />
           <Stack.Screen name="+not-found" />
           <Stack.Screen
             name="match/[id]"
-            options={{ headerTitle: "Match Details" }}
+            options={{ headerShown: true, headerTitle: "Match Details" }}
           />
         </Stack>
         <PortalHost />

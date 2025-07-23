@@ -1,32 +1,39 @@
 import { Tabs } from "expo-router";
-import { ClockFading } from "lucide-react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import React from "react";
+
+function getIconNameByRoute(route: string) {
+  switch (route) {
+    case "index":
+      return "history";
+    case "players":
+      return "account-group";
+    default:
+      return "progress-question";
+  }
+}
 
 export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: {
-          position: "absolute",
+        tabBarActiveTintColor: "#2f95dc",
+        tabBarInactiveTintColor: "gray",
+        tabBarIcon: ({ color, size }) => {
+          return (
+            <MaterialCommunityIcons
+              name={getIconNameByRoute(route.name)}
+              size={size}
+              color={color}
+            />
+          );
         },
-        tabBarActiveTintColor: "#ff0000",
-        tabBarInactiveTintColor: "#888888",
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "600",
-        },
-      }}
+      })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Matches",
-          tabBarIcon: ({ size, color }) => (
-            <ClockFading size={size} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="players" />
     </Tabs>
   );
 }

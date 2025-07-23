@@ -22,7 +22,7 @@ export function PlayerCard({ player, matchResults }: PlayerCardProps) {
     >
       <Card className="overflow-hidden rounded-2xl bg-card shadow-md">
         {/* Ranking Banner */}
-        <View className="absolute top-0 left-0 right-0 h-1.5 bg-primary/80" />
+        <View className="absolute top-0 left-0 right-0 h-1.5 bg-accent" />
 
         <View className="pt-3">
           {/* Header with Club and Ranking */}
