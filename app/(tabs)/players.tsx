@@ -26,7 +26,7 @@ export default function PlayersPage() {
   const filteredPlayers = players.filter(
     (p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.club?.toLowerCase().includes(searchQuery.toLowerCase()),
+      p.club?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const onRefresh = () => {

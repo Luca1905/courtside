@@ -26,7 +26,7 @@ function AlertDialogOverlayWeb({
         open
           ? "web:animate-in web:fade-in-0"
           : "web:animate-out web:fade-out-0",
-        className,
+        className
       )}
       {...props}
     />
@@ -44,7 +44,7 @@ function AlertDialogOverlayNative({
     <AlertDialogPrimitive.Overlay
       className={cn(
         "z-50 absolute top-0 right-0 bottom-0 left-0 bg-black/80 flex justify-center items-center p-2",
-        className,
+        className
       )}
       {...props}
       asChild
@@ -83,7 +83,7 @@ function AlertDialogContent({
             open
               ? "web:animate-in web:fade-in-0 web:zoom-in-95"
               : "web:animate-out web:fade-out-0 web:zoom-out-95",
-            className,
+            className
           )}
           {...props}
         />
@@ -101,7 +101,7 @@ function AlertDialogFooter({ className, ...props }: ViewProps) {
     <View
       className={cn(
         "flex flex-col-reverse sm:flex-row sm:justify-end gap-2",
-        className,
+        className
       )}
       {...props}
     />
@@ -118,7 +118,7 @@ function AlertDialogTitle({
     <AlertDialogPrimitive.Title
       className={cn(
         "text-lg native:text-xl text-foreground font-semibold",
-        className,
+        className
       )}
       {...props}
     />
@@ -135,7 +135,7 @@ function AlertDialogDescription({
     <AlertDialogPrimitive.Description
       className={cn(
         "text-sm native:text-base text-muted-foreground",
-        className,
+        className
       )}
       {...props}
     />

@@ -21,7 +21,7 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 const badgeTextVariants = cva("text-xs font-semibold ", {

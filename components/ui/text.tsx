@@ -20,7 +20,7 @@ function Text({
       className={cn(
         "text-base text-foreground web:select-text",
         textClass,
-        className,
+        className
       )}
       {...props}
     />

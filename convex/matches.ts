@@ -1,60 +1,87 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
+import { query, QueryCtx } from "./_generated/server";
+import { Doc, Id } from "./_generated/dataModel";
 
-export const get = query({
+const MATCHES = "matches";
+const PLAYERS = "players";
+
+export type Match = Doc<"matches">;
+export type Player = Doc<"players">;
+export type MatchWithOpponent = Match & { opponent: Player };
+
+// --- Helpers --------------------------------------------------
+
+async function fetchMatchById(
+  ctx: QueryCtx,
+  id: Id<"matches">
+): Promise<Match | null> {
+  return await ctx.db
+    .query(MATCHES)
+    .withIndex("by_id", (q) => q.eq("_id", id))
+    .first();
+}
+
+async function fetchPlayerById(
+  ctx: QueryCtx,
+  id: Id<"players">
+): Promise<Player | null> {
+  return await ctx.db
+    .query(PLAYERS)
+    .withIndex("by_id", (q) => q.eq("_id", id))
+    .first();
+}
+
+async function attachOpponent(
+  ctx: QueryCtx,
+  match: Doc<"matches">
+): Promise<MatchWithOpponent | null> {
+  const opponent = await fetchPlayerById(ctx, match.opponentId);
+  if (!opponent) return null;
+  return { ...match, opponent };
+}
+
+// --- Queries --------------------------------------------------
+
+export const getAll = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("matches").collect();
+    return await ctx.db.query(MATCHES).collect();
+  },
+});
+
+export const getAllWithOpponent = query({
+  args: {},
+  handler: async (ctx) => {
+    const matches = await ctx.db.query(MATCHES).collect();
+    const enriched = await Promise.all(
+      matches.map((m) => attachOpponent(ctx, m))
+    );
+    return enriched.filter((m): m is MatchWithOpponent => m !== null);
   },
 });
 
 export const getById = query({
-  args: {
-    id: v.id('matches'),
-  },
+  args: { id: v.id("matches") },
   handler: async (ctx, { id }) => {
-    return await ctx.db
-      .query("matches")
-      .withIndex("by_id", (q) => q.eq("_id", id))
-      .first();
-  }
-})
+    return await fetchMatchById(ctx, id);
+  },
+});
 
 export const getByDate = query({
-  args: {
-    date: v.string(),
-  },
+  args: { date: v.string() },
   handler: async (ctx, { date }) => {
     return await ctx.db
-      .query("matches")
+      .query(MATCHES)
       .withIndex("by_date", (q) => q.eq("date", date))
       .collect();
   },
-})
-
-export type MatchWithOpponent = Doc<"matches"> & {
-  opponent: Doc<"players">;
-};
+});
 
 export const getMatchWithOpponent = query({
-  args: {
-    matchId: v.id("matches"),
-  },
-  handler: async (ctx, { matchId }): Promise<MatchWithOpponent | null> => {
-    const match = await ctx.db
-      .query("matches")
-      .withIndex("by_id", (q) => q.eq("_id", matchId))
-      .first();
+  args: { matchId: v.id("matches") },
+  handler: async (ctx, { matchId }) => {
+    const match = await fetchMatchById(ctx, matchId);
     if (!match) return null;
-    const opponent = await ctx.db
-      .query("players")
-      .withIndex("by_id", (q) => q.eq("_id", match.opponentId))
-      .first();
-    if (!opponent) return null;
-    return {
-      ...match,
-      opponent: opponent
-    }
-  }
-})
+    return await attachOpponent(ctx, match);
+  },
+});

@@ -29,7 +29,7 @@ export default function MatchScreen() {
       ? {
           matchId: matchId as Id<"matches">,
         }
-      : "skip",
+      : "skip"
   );
 
   // Loading state
@@ -75,7 +75,7 @@ export default function MatchScreen() {
             <View
               className={cn(
                 "absolute top-0 left-0 right-0 h-1.5 rounded-t-lg",
-                match.score.won ? "bg-green-500" : "bg-red-500",
+                match.score.won ? "bg-green-500" : "bg-red-500"
               )}
             />
             <View className="flex-row justify-between items-center">
@@ -84,7 +84,7 @@ export default function MatchScreen() {
                 <Text
                   className={cn(
                     "text-3xl font-black",
-                    match.score.won ? "text-green-700" : "text-red-700",
+                    match.score.won ? "text-green-700" : "text-red-700"
                   )}
                 >
                   {match.score.sets.join(" ")}
@@ -92,7 +92,7 @@ export default function MatchScreen() {
                 <Text
                   className={cn(
                     "text-sm font-semibold mt-1",
-                    match.score.won ? "text-green-600" : "text-red-600",
+                    match.score.won ? "text-green-600" : "text-red-600"
                   )}
                 >
                   {match.score.won ? "Victory" : "Defeat"}
@@ -107,7 +107,7 @@ export default function MatchScreen() {
                   match.surface === "Clay" &&
                     "bg-[#D97706]/10 border border-[#D97706]/30",
                   match.surface === "Grass" &&
-                    "bg-[#15803D]/10 border border-[#15803D]/30",
+                    "bg-[#15803D]/10 border border-[#15803D]/30"
                 )}
               >
                 {/* Icons */}
@@ -137,7 +137,7 @@ export default function MatchScreen() {
                     "text-xs font-medium",
                     match.surface === "Hard" && "text-[#3B82F6]",
                     match.surface === "Clay" && "text-[#D97706]",
-                    match.surface === "Grass" && "text-[#15803D]",
+                    match.surface === "Grass" && "text-[#15803D]"
                   )}
                 >
                   {match.surface}

@@ -1,10 +1,7 @@
-import { useQuery } from "convex/react";
 import { Pressable, View } from "react-native";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
-import { api } from "~/convex/_generated/api";
-import type { Doc } from "~/convex/_generated/dataModel";
 import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { CloudRain } from "~/lib/icons/CloudRain";
@@ -13,9 +10,10 @@ import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import { Link } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { MatchWithOpponent } from "~/convex/matches";
 
 interface MatchCardProps {
-  match: Doc<"matches">;
+  match: MatchWithOpponent;
 }
 
 const formatDate = (iso: string) =>
@@ -29,14 +27,6 @@ const formatDuration = (min: number) =>
   `${Math.floor(min / 60) ? `${Math.floor(min / 60)}h ` : ""}${min % 60}m`;
 
 export function MatchCard({ match }: MatchCardProps) {
-  const opponent = useQuery(api.players.getById, {
-    playerId: match.opponentId,
-  });
-
-  if (!opponent) return null;
-
-  const won = match.score.won;
-
   return (
     <Link
       href={{
@@ -52,7 +42,7 @@ export function MatchCard({ match }: MatchCardProps) {
           <View
             className={cn(
               "absolute top-0 left-0 right-0 h-1.5",
-              won ? "bg-green-500" : "bg-red-500",
+              match.score.won ? "bg-green-500" : "bg-red-500"
             )}
           />
 
@@ -79,7 +69,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   match.surface === "Clay" &&
                     "bg-[#D97706]/10 border border-[#D97706]/30",
                   match.surface === "Grass" &&
-                    "bg-[#15803D]/10 border border-[#15803D]/30",
+                    "bg-[#15803D]/10 border border-[#15803D]/30"
                 )}
               >
                 <MaterialCommunityIcons
@@ -104,7 +94,7 @@ export function MatchCard({ match }: MatchCardProps) {
                     "text-xs font-medium",
                     match.surface === "Hard" && "text-[#3B82F6]",
                     match.surface === "Clay" && "text-[#D97706]",
-                    match.surface === "Grass" && "text-[#15803D]",
+                    match.surface === "Grass" && "text-[#15803D]"
                   )}
                 >
                   {match.surface}
@@ -120,15 +110,15 @@ export function MatchCard({ match }: MatchCardProps) {
                     OPPONENT
                   </Text>
                   <Text className="text-xl font-extrabold text-primary mb-1">
-                    {opponent.name}
+                    {match.opponent.name}
                   </Text>
                   <View className="flex-row items-center gap-2">
                     <Text className="text-sm font-medium text-muted-foreground">
-                      {opponent.club}
+                      {match.opponent.club}
                     </Text>
                     <Badge className="bg-muted px-2 py-0.5 rounded-lg">
                       <Text className="text-2xs font-semibold text-muted-foreground">
-                        LK {opponent.ranking}
+                        LK {match.opponent.ranking}
                       </Text>
                     </Badge>
                   </View>
@@ -139,7 +129,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   <Text
                     className={cn(
                       "text-3xl font-black",
-                      won ? "text-green-700" : "text-red-700",
+                      match.score.won ? "text-green-700" : "text-red-700"
                     )}
                   >
                     {match.score.sets.join(" ")}
@@ -147,10 +137,10 @@ export function MatchCard({ match }: MatchCardProps) {
                   <Text
                     className={cn(
                       "text-sm font-semibold mt-1",
-                      won ? "text-green-600" : "text-red-600",
+                      match.score.won ? "text-green-600" : "text-red-600"
                     )}
                   >
-                    {won ? "Victory" : "Defeat"}
+                    {match.score.won ? "Victory" : "Defeat"}
                   </Text>
                 </View>
               </View>
