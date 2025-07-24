@@ -32,8 +32,18 @@ export default function TabLayout() {
         },
       })}
     >
-      <Tabs.Screen name="index" />
-      <Tabs.Screen name="players" />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Matches",
+        }}
+      />
+      <Tabs.Screen
+        name="players"
+        options={{
+          title: "Players",
+        }}
+      />
     </Tabs>
   );
 }
