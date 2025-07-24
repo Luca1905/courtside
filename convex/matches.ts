@@ -1,13 +1,14 @@
 import { v } from "convex/values";
 import { query, QueryCtx } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
+import type { Prettify } from "../lib/utils";
 
 const MATCHES = "matches";
 const PLAYERS = "players";
 
 export type Match = Doc<"matches">;
 export type Player = Doc<"players">;
-export type MatchWithOpponent = Match & { opponent: Player };
+export type MatchWithOpponent = Prettify<Match & { opponent: Player }>;
 
 // --- Helpers --------------------------------------------------
 
