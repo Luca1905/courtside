@@ -84,6 +84,10 @@ export default function RootLayout() {
             name="match/[id]"
             options={{ headerShown: true, headerTitle: "Match Details" }}
           />
+          <Stack.Screen
+            name="player/[id]"
+            options={{ headerShown: true, headerTitle: "Player Details" }}
+          />
         </Stack>
         <PortalHost />
       </ThemeProvider>
