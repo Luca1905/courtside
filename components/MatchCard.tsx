@@ -10,10 +10,10 @@ import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 import { useRouter } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { MatchWithOpponent } from "~/convex/matches";
+import type { MatchWithOpponentRecord } from "~/convex/matches";
 
 interface MatchCardProps {
-  match: MatchWithOpponent;
+  match: MatchWithOpponentRecord;
 }
 
 const formatDate = (iso: string) =>

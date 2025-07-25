@@ -3,86 +3,108 @@ import { query, QueryCtx } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 import type { Prettify } from "../lib/utils";
 
-const MATCHES = "matches";
-const PLAYERS = "players";
+const MATCHES_COLLECTION = "matches";
+const PLAYERS_COLLECTION = "players";
 
-export type Match = Doc<"matches">;
-export type Player = Doc<"players">;
-export type MatchWithOpponent = Prettify<Match & { opponent: Player }>;
+export type MatchRecord = Doc<"matches">;
+export type PlayerRecord = Doc<"players">;
+export type MatchWithOpponentRecord = Prettify<
+  MatchRecord & { opponent: PlayerRecord }
+>;
 
 // --- Helpers --------------------------------------------------
 
 async function fetchMatchById(
   ctx: QueryCtx,
-  id: Id<"matches">
-): Promise<Match | null> {
+  matchId: Id<"matches">
+): Promise<MatchRecord | null> {
   return await ctx.db
-    .query(MATCHES)
-    .withIndex("by_id", (q) => q.eq("_id", id))
+    .query(MATCHES_COLLECTION)
+    .withIndex("by_id", (q) => q.eq("_id", matchId))
     .first();
 }
 
 async function fetchPlayerById(
   ctx: QueryCtx,
-  id: Id<"players">
-): Promise<Player | null> {
+  playerId: Id<"players">
+): Promise<PlayerRecord | null> {
   return await ctx.db
-    .query(PLAYERS)
-    .withIndex("by_id", (q) => q.eq("_id", id))
+    .query(PLAYERS_COLLECTION)
+    .withIndex("by_id", (q) => q.eq("_id", playerId))
     .first();
 }
 
-async function attachOpponent(
+async function populateMatchWithOpponent(
   ctx: QueryCtx,
-  match: Doc<"matches">
-): Promise<MatchWithOpponent | null> {
-  const opponent = await fetchPlayerById(ctx, match.opponentId);
-  if (!opponent) return null;
-  return { ...match, opponent };
+  match: MatchRecord
+): Promise<MatchWithOpponentRecord | null> {
+  const opponentRecord = await fetchPlayerById(ctx, match.opponentId);
+  if (!opponentRecord) return null;
+  return { ...match, opponent: opponentRecord };
 }
 
 // --- Queries --------------------------------------------------
 
-export const getAll = query({
+export const getAllMatches = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query(MATCHES).collect();
+    return await ctx.db.query(MATCHES_COLLECTION).collect();
   },
 });
 
-export const getAllWithOpponent = query({
+export const getAllMatchesWithOpponent = query({
   args: {},
   handler: async (ctx) => {
-    const matches = await ctx.db.query(MATCHES).collect();
-    const enriched = await Promise.all(
-      matches.map((m) => attachOpponent(ctx, m))
+    const rawMatches = await ctx.db.query(MATCHES_COLLECTION).collect();
+    const matchesWithOpponent = await Promise.all(
+      rawMatches.map((match) => populateMatchWithOpponent(ctx, match))
     );
-    return enriched.filter((m): m is MatchWithOpponent => m !== null);
+    return matchesWithOpponent.filter(
+      (match): match is MatchWithOpponentRecord => match !== null
+    );
   },
 });
 
-export const getById = query({
-  args: { id: v.id("matches") },
-  handler: async (ctx, { id }) => {
-    return await fetchMatchById(ctx, id);
+export const getMatchesAgainstOpponent = query({
+  args: { opponentId: v.id("players") },
+  handler: async (ctx, { opponentId }) => {
+    const matches = await ctx.db
+      .query(MATCHES_COLLECTION)
+      .filter((q) => q.eq(q.field("opponentId"), opponentId))
+      .collect();
+
+    const matchesWithOpponent = await Promise.all(
+      matches.map((match) => populateMatchWithOpponent(ctx, match))
+    );
+
+    return matchesWithOpponent.filter(
+      (m): m is MatchWithOpponentRecord => m !== null
+    );
   },
 });
 
-export const getByDate = query({
+export const getMatchById = query({
+  args: { matchId: v.id("matches") },
+  handler: async (ctx, { matchId }) => {
+    return await fetchMatchById(ctx, matchId);
+  },
+});
+
+export const getMatchesByDate = query({
   args: { date: v.string() },
   handler: async (ctx, { date }) => {
     return await ctx.db
-      .query(MATCHES)
+      .query(MATCHES_COLLECTION)
       .withIndex("by_date", (q) => q.eq("date", date))
       .collect();
   },
 });
 
-export const getMatchWithOpponent = query({
+export const getMatchWithOpponentById = query({
   args: { matchId: v.id("matches") },
   handler: async (ctx, { matchId }) => {
     const match = await fetchMatchById(ctx, matchId);
     if (!match) return null;
-    return await attachOpponent(ctx, match);
+    return await populateMatchWithOpponent(ctx, match);
   },
 });

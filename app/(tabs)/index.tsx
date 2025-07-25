@@ -11,7 +11,7 @@ import { api } from "~/convex/_generated/api";
 import { useState } from "react";
 
 export default function HomeScreen() {
-  const matchesWithOpponent = useQuery(api.matches.getAllWithOpponent);
+  const matchesWithOpponent = useQuery(api.matches.getAllMatchesWithOpponent);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
 

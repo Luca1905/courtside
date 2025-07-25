@@ -30,17 +30,10 @@ const Outcome = v.object({
 export default defineSchema({
   matches: defineTable({
     date: v.string(),
-    type: v.union(
-      v.literal("Singles"),
-      v.literal("Doubles"),
-    ),
+    type: v.union(v.literal("Singles"), v.literal("Doubles")),
     opponentId: v.id("players"),
     venue: v.string(),
-    surface: v.union(
-      v.literal("Clay"),
-      v.literal("Hard"),
-      v.literal("Grass"),
-    ),
+    surface: v.union(v.literal("Clay"), v.literal("Hard"), v.literal("Grass")),
     duration: v.number(),
     score: v.object({
       sets: v.array(v.string()),
@@ -95,15 +88,11 @@ export default defineSchema({
     name: v.string(),
     club: v.optional(v.string()),
     ranking: v.optional(v.number()),
-    hittingArm: v.optional(
-      v.union(
-        v.literal("Right"),
-        v.literal("Left"),
-      )),
+    hittingArm: v.optional(v.union(v.literal("Right"), v.literal("Left"))),
     backhandGrip: v.optional(
-      v.union(
-        v.literal("Two-Handed"),
-        v.literal("One-Handed"),
-      )),
+      v.union(v.literal("Two-Handed"), v.literal("One-Handed"))
+    ),
+    playingSince: v.optional(v.number()),
+    birthYear: v.optional(v.number()),
   }),
 });

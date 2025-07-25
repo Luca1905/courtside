@@ -23,7 +23,7 @@ export default function MatchScreen() {
   const { id: matchId } = useLocalSearchParams();
 
   const match = useQuery(
-    api.matches.getMatchWithOpponent,
+    api.matches.getMatchWithOpponentById,
     typeof matchId === "string"
       ? {
           matchId: matchId as Id<"matches">,
