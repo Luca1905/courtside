@@ -12,7 +12,6 @@ import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { ThemeToggle } from "~/components/ThemeToggle";
 import { PortalHost } from "@rn-primitives/portal";
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
@@ -59,7 +58,6 @@ export default function RootLayout() {
           screenOptions={{
             headerTitle: "",
             headerBackTitle: "Back",
-            headerRight: () => <ThemeToggle />,
           }}
         >
           <Stack.Screen

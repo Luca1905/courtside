@@ -276,7 +276,7 @@ export default function MatchScreen() {
                   Aces
                 </Text>
                 <Text className="text-lg font-extrabold text-green-600 mt-1">
-                  {match.statistics.serve.aces.total}
+                  {match.stats.player.serve.aces.total}
                 </Text>
               </View>
               <View className="w-1/2 items-center mb-4">
@@ -284,7 +284,7 @@ export default function MatchScreen() {
                   Double Faults
                 </Text>
                 <Text className="text-lg font-extrabold text-destructive mt-1">
-                  {match.statistics.serve.doubleFaults.total}
+                  {match.stats.player.serve.doubleFaults.total}
                 </Text>
               </View>
               <View className="w-1/2 items-center mb-4">
@@ -292,7 +292,7 @@ export default function MatchScreen() {
                   1st Serve %
                 </Text>
                 <Text className="text-lg font-extrabold text-foreground mt-1">
-                  {match.statistics.serve.totalPoints.firstServe}%
+                  {match.stats.player.serve.totalPoints.firstServe}%
                 </Text>
               </View>
               <View className="w-1/2 items-center mb-4">
@@ -300,7 +300,7 @@ export default function MatchScreen() {
                   Break Points
                 </Text>
                 <Text className="text-lg font-extrabold text-foreground mt-1">
-                  {match.statistics.overall.breakPoints.won}
+                  {match.stats.player.overall.breakPoints.won}
                 </Text>
               </View>
             </View>

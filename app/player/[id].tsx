@@ -11,169 +11,8 @@ import { cn } from "~/lib/utils";
 import { Id } from "~/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
-import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 import { MaterialCommunityIconNames } from "~/lib/icons/definitions";
-import { MatchWithOpponent } from "~/convex/matches";
-
-// Mock data
-const MOCK_PLAYER = {
-  _id: "1",
-  name: "Alexander Schmidt",
-  club: "TC Blau-Weiß",
-  ranking: 12,
-  hittingArm: "Right",
-  backhandGrip: "Two-handed",
-  height: 185,
-  weight: 80,
-  birthYear: 1995,
-  playingSince: 2005,
-  stats: {
-    current: {
-      aces: 5.2,
-      doubleFaults: 2.8,
-      firstServePercentage: 62,
-      firstServeWonPercentage: 71,
-    },
-    trend: {
-      aces: +0.8,
-      doubleFaults: -0.3,
-      firstServePercentage: +2,
-      firstServeWonPercentage: +1.5,
-    },
-    history: {
-      aces: [4.2, 4.8, 5.0, 4.7, 5.2],
-      doubleFaults: [3.1, 2.9, 3.0, 2.8, 2.8],
-      firstServePercentage: [60, 61, 59, 63, 62],
-      firstServeWonPercentage: [68, 70, 69, 72, 71],
-    },
-  },
-};
-
-const MOCK_MATCHES: MatchWithOpponent[] = [
-  {
-    _id: "j576y59vak7emqwfmj4m8fff4s7khrh8" as Id<"matches">,
-    date: "2025-06-20",
-    duration: 120,
-    opponentId: "j970t3jjf27c1jnqd8hg5xw7dd7kh4st" as Id<"players">,
-    opponent: {
-      _id: "j970t3jjf27c1jnqd8hg5xw7dd7kh4st" as Id<"players">,
-      backhandGrip: undefined,
-      club: "TSC Paulo",
-      hittingArm: undefined,
-      name: "Paul Paulus",
-      ranking: 15,
-      _creationTime: 1752247435997.3381,
-    },
-    score: { sets: ["6-4", "3-6", "7-5"], won: true },
-    statistics: {
-      overall: {
-        aces: 7,
-        breakPoints: { count: 7, won: 4 },
-        doubleFaults: 3,
-        firstServes: { count: 65, won: 44 },
-        netPoints: { count: 30, won: 21 },
-        receivingPoints: { count: 83, won: 46 },
-        secondServes: { count: 27, won: 14 },
-        totalPoints: { count: 142, won: 84 },
-        unforcedError: 18,
-        winners: 52,
-      },
-      rally: {
-        approachShots: {
-          forcedErrors: { bh: 1, fh: 3 },
-          unforcedErrors: { bh: 3, fh: 2 },
-          winners: { bh: 2, fh: 5 },
-        },
-        dropShots: {
-          forcedErrors: { bh: 0, fh: 0 },
-          unforcedErrors: { bh: 0, fh: 1 },
-          winners: { bh: 0, fh: 1 },
-        },
-        groundStrokes: {
-          forcedErrors: { bh: 10, fh: 15 },
-          unforcedErrors: { bh: 8, fh: 12 },
-          winners: { bh: 20, fh: 30 },
-        },
-        lobs: {
-          forcedErrors: { bh: 1, fh: 2 },
-          unforcedErrors: { bh: 0, fh: 1 },
-          winners: { bh: 1, fh: 3 },
-        },
-        overheadStroke: {
-          forcedErrors: { bh: 0, fh: 1 },
-          unforcedErrors: { bh: 1, fh: 0 },
-          winners: { bh: 0, fh: 2 },
-        },
-        passingShot: {
-          forcedErrors: { bh: 1, fh: 2 },
-          unforcedErrors: { bh: 2, fh: 1 },
-          winners: { bh: 3, fh: 4 },
-        },
-        volleys: {
-          forcedErrors: { bh: 3, fh: 4 },
-          unforcedErrors: { bh: 2, fh: 3 },
-          winners: { bh: 8, fh: 10 },
-        },
-      },
-      return: {
-        returnPoints: {
-          firstServe: 60,
-          secondServe: 23,
-          total: 83,
-        },
-        returnPointsWon: {
-          firstServe: 30,
-          secondServe: 16,
-          total: 46,
-        },
-        returnUnforcedErrors: {
-          firstServe: 8,
-          secondServe: 6,
-          total: 14,
-        },
-        returnWinners: {
-          firstServe: 10,
-          secondServe: 4,
-          total: 14,
-        },
-      },
-      serve: {
-        aces: { firstServe: 7, secondServe: 0, total: 7 },
-        doubleFaults: {
-          firstServe: 1,
-          secondServe: 2,
-          total: 3,
-        },
-        serviceGames: 9,
-        serviceWinners: {
-          firstServe: 5,
-          secondServe: 1,
-          total: 6,
-        },
-        totalPoints: {
-          firstServe: 65,
-          secondServe: 27,
-          total: 92,
-        },
-        totalPointsWon: {
-          firstServe: 44,
-          secondServe: 14,
-          total: 58,
-        },
-      },
-    },
-    surface: "Grass",
-    type: "Singles",
-    venue: "Riverside Stadium",
-    weather: {
-      humidity: 58,
-      precipitation: 0,
-      temperature: 24,
-      windSpeed: 12,
-    },
-    _creationTime: 1752249347496.0483,
-  },
-];
+import PlayerScreenSkeleton from "~/components/PlayerScreenSkeleton";
 
 export default function PlayerDetailsPage() {
   const router = useRouter();
@@ -188,13 +27,33 @@ export default function PlayerDetailsPage() {
       : "skip"
   );
 
-  // TODO: Loading state
-  if (player === undefined) {
-    return <MatchScreenSkeleton />;
+  const playerStats = useQuery(
+    api.stats.getPlayerStats,
+    typeof playerId === "string"
+      ? {
+          playerId: playerId as Id<"players">,
+        }
+      : "skip"
+  );
+
+  const matches = useQuery(
+    api.matches.getMatchesAgainstOpponent,
+    typeof playerId === "string"
+      ? { opponentId: playerId as Id<"players"> }
+      : "skip"
+  );
+
+  // // TODO: Loading state
+  if (
+    player === undefined ||
+    playerStats === undefined ||
+    matches === undefined
+  ) {
+    return <PlayerScreenSkeleton />;
   }
 
   // No match found
-  if (player === null) {
+  if (player === null || playerStats === null || matches === null) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
         <Text className="text-lg text-gray-500 mb-4">player not found</Text>
@@ -215,38 +74,42 @@ export default function PlayerDetailsPage() {
     suffix = "",
   }: {
     title: string;
-    value: string | number;
+    value?: string | number;
     trend: number;
     suffix?: string;
-  }) => (
-    <Card className="flex-1 p-3">
-      <Text className="text-xs font-medium text-muted-foreground mb-1">
-        {title}
-      </Text>
-      <View className="flex-row items-baseline gap-2">
-        <Text className="text-2xl font-bold text-foreground">
-          {value}
-          {suffix}
+  }) => {
+    // decide color: green for >0, red for <0, gray for ===0
+    const trendColor =
+      trend > 0
+        ? "text-green-500"
+        : trend < 0
+          ? "text-red-500"
+          : "text-gray-500";
+
+    // pick icon: up or down (we’ll render down in gray for zero)
+    const TrendIcon = trend > 0 ? ArrowUp : ArrowDown;
+
+    return (
+      <Card className="flex-1 p-3">
+        <Text className="text-xs font-medium text-muted-foreground mb-1">
+          {title}
         </Text>
-        <View className="flex-row items-center">
-          {trend > 0 ? (
-            <ArrowUp size={12} className="text-green-500" />
-          ) : (
-            <ArrowDown size={12} className="text-red-500" />
-          )}
-          <Text
-            className={cn(
-              "text-xs font-medium",
-              trend > 0 ? "text-green-500" : "text-red-500"
-            )}
-          >
-            {Math.abs(trend).toFixed(1)}
+        <View className="flex-row items-baseline gap-2">
+          <Text className="text-2xl font-bold text-foreground">
+            {value ?? "--"}
             {suffix}
           </Text>
+          <View className="flex-row items-center">
+            <TrendIcon size={12} className={trendColor} />
+            <Text className={cn("text-xs font-medium", trendColor)}>
+              {Math.abs(trend).toFixed(1)}
+              {suffix}
+            </Text>
+          </View>
         </View>
-      </View>
-    </Card>
-  );
+      </Card>
+    );
+  };
 
   const PlayerInfoItem = ({
     icon,
@@ -255,7 +118,7 @@ export default function PlayerDetailsPage() {
   }: {
     icon: MaterialCommunityIconNames;
     label: string;
-    value: string | number;
+    value: string | number | undefined;
   }) => (
     <View className="flex-row items-center gap-2">
       <MaterialCommunityIcons
@@ -265,7 +128,9 @@ export default function PlayerDetailsPage() {
       />
       <View>
         <Text className="text-xs text-muted-foreground">{label}</Text>
-        <Text className="text-sm font-medium text-foreground">{value}</Text>
+        <Text className="text-sm font-medium text-foreground">
+          {value ?? "--"}
+        </Text>
       </View>
     </View>
   );
@@ -292,15 +157,15 @@ export default function PlayerDetailsPage() {
                 <View className="flex-row justify-between items-center">
                   <View>
                     <Text className="text-2xl font-bold text-foreground">
-                      {MOCK_PLAYER.name}
+                      {player.name}
                     </Text>
                     <Text className="text-base text-muted-foreground mt-1">
-                      {MOCK_PLAYER.club}
+                      {player.club}
                     </Text>
                   </View>
                   <Badge className="bg-primary px-3 py-1.5">
                     <Text className="text-lg font-bold text-primary-foreground">
-                      LK {MOCK_PLAYER.ranking}
+                      LK {player.ranking}
                     </Text>
                   </Badge>
                 </View>
@@ -308,33 +173,39 @@ export default function PlayerDetailsPage() {
 
               {/* Player Details Grid */}
               <View className="p-4">
-                <View className="flex-row flex-wrap gap-y-4">
+                <View className="flex-row flex-wrap gap-y-2">
                   <View className="flex-1 min-w-[150]">
                     <PlayerInfoItem
                       icon="hand-front-right"
                       label="Hitting Arm"
-                      value={`${MOCK_PLAYER.hittingArm}-handed`}
+                      value={
+                        player.hittingArm ? `${player.hittingArm}-handed` : "--"
+                      }
                     />
                   </View>
                   <View className="flex-1 min-w-[150]">
                     <PlayerInfoItem
                       icon="tennis"
                       label="Backhand Grip"
-                      value={MOCK_PLAYER.backhandGrip}
+                      value={player.backhandGrip}
                     />
                   </View>
                   <View className="flex-1 min-w-[150]">
                     <PlayerInfoItem
                       icon="calendar"
                       label="Playing Since"
-                      value={MOCK_PLAYER.playingSince}
+                      value={player.playingSince}
                     />
                   </View>
                   <View className="flex-1 min-w-[150]">
                     <PlayerInfoItem
                       icon="cake"
                       label="Age"
-                      value={`${new Date().getFullYear() - MOCK_PLAYER.birthYear} years`}
+                      value={
+                        player.birthYear
+                          ? `${new Date().getFullYear() - player.birthYear} years`
+                          : undefined
+                      }
                     />
                   </View>
                 </View>
@@ -350,26 +221,26 @@ export default function PlayerDetailsPage() {
             <View className="flex-row gap-2 mb-3">
               <StatCard
                 title="Aces per Match"
-                value={MOCK_PLAYER.stats.current.aces}
-                trend={MOCK_PLAYER.stats.trend.aces}
+                value={playerStats.current.aces}
+                trend={playerStats.trend.aces}
               />
               <StatCard
                 title="Double Faults"
-                value={MOCK_PLAYER.stats.current.doubleFaults}
-                trend={MOCK_PLAYER.stats.trend.doubleFaults}
+                value={playerStats.current.doubleFaults}
+                trend={playerStats.trend.doubleFaults}
               />
             </View>
             <View className="flex-row gap-2 mb-6">
               <StatCard
                 title="1st Serve %"
-                value={MOCK_PLAYER.stats.current.firstServePercentage}
-                trend={MOCK_PLAYER.stats.trend.firstServePercentage}
+                value={playerStats.current.firstServePercentage}
+                trend={playerStats.trend.firstServePercentage}
                 suffix="%"
               />
               <StatCard
                 title="1st Serve Won %"
-                value={MOCK_PLAYER.stats.current.firstServeWonPercentage}
-                trend={MOCK_PLAYER.stats.trend.firstServeWonPercentage}
+                value={playerStats.current.firstServeWonPercentage}
+                trend={playerStats.trend.firstServeWonPercentage}
                 suffix="%"
               />
             </View>
@@ -386,7 +257,7 @@ export default function PlayerDetailsPage() {
                   labels: ["", "", "", "", ""],
                   datasets: [
                     {
-                      data: MOCK_PLAYER.stats.history.firstServeWonPercentage,
+                      data: playerStats.history.firstServeWonPercentage,
                       color: () => "#22c55e",
                     },
                   ],
@@ -417,7 +288,7 @@ export default function PlayerDetailsPage() {
             <Text className="text-lg font-bold text-foreground mb-3">
               Recent Matches
             </Text>
-            {MOCK_MATCHES.map((match) => (
+            {matches.map((match) => (
               <MatchCard key={match._id} match={match} />
             ))}
           </View>
