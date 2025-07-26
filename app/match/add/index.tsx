@@ -14,8 +14,8 @@ import { Trophy } from "~/lib/icons/Trophy";
 import { cn } from "~/lib/utils";
 import { MaterialCommunityIconNames } from "~/lib/icons/definitions";
 
-const MATCH_TYPES = ["Singles", "Doubles"];
-const SURFACES = ["Hard", "Clay", "Grass"];
+const MATCH_TYPES = ["Singles", "Doubles"] as const;
+const SURFACES = ["Hard", "Clay", "Grass"] as const;
 
 const MOCK_OPPONENTS = [
   { id: "1", name: "Marie Weber", club: "Tennis Club Berlin" },
