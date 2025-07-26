@@ -7,7 +7,7 @@ import {
   DarkTheme,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { NAV_THEME } from "~/lib/constants";
@@ -58,6 +58,7 @@ export default function RootLayout() {
           screenOptions={{
             headerTitle: "",
             headerBackTitle: "Back",
+            headerRight: () => <Link href="/match/add">Add</Link>,
           }}
         >
           <Stack.Screen
