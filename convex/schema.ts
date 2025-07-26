@@ -27,6 +27,48 @@ const Outcome = v.object({
   }),
 });
 
+const StatsSchema = v.object({
+  overall: v.object({
+    aces: v.number(),
+    doubleFaults: v.number(),
+    firstServes: v.object({
+      in: v.number(),
+      total: v.number(),
+    }),
+    firstServeWon: PointsSummary,
+    secondServeWon: PointsSummary,
+    netPoints: PointsSummary,
+    breakPoints: PointsSummary,
+    receivingPoints: PointsSummary,
+    winners: v.number(),
+    unforcedError: v.number(),
+    totalPoints: PointsSummary,
+  }),
+  serve: v.object({
+    aces: Breakdown,
+    serviceWinners: Breakdown,
+    doubleFaults: Breakdown,
+    totalPoints: Breakdown,
+    totalPointsWon: Breakdown,
+    serviceGames: v.number(),
+  }),
+  return: v.object({
+    returnWinners: Breakdown,
+    returnUnforcedErrors: Breakdown,
+    returnPoints: Breakdown,
+    returnPointsWon: Breakdown,
+  }),
+  rally: v.object({
+    approachShots: Outcome,
+    dropShots: Outcome,
+    groundStrokes: Outcome,
+    lobs: Outcome,
+    overheadStroke: Outcome,
+    passingShot: Outcome,
+    volleys: Outcome,
+  }),
+});
+
 export default defineSchema({
   matches: defineTable({
     date: v.string(),
@@ -45,44 +87,13 @@ export default defineSchema({
       precipitation: v.number(),
       humidity: v.number(),
     }),
-    statistics: v.object({
-      overall: v.object({
-        aces: v.number(),
-        doubleFaults: v.number(),
-        firstServes: PointsSummary,
-        secondServes: PointsSummary,
-        netPoints: PointsSummary,
-        breakPoints: PointsSummary,
-        receivingPoints: PointsSummary,
-        winners: v.number(),
-        unforcedError: v.number(),
-        totalPoints: PointsSummary,
-      }),
-      serve: v.object({
-        aces: Breakdown,
-        serviceWinners: Breakdown,
-        doubleFaults: Breakdown,
-        totalPoints: Breakdown,
-        totalPointsWon: Breakdown,
-        serviceGames: v.number(),
-      }),
-      return: v.object({
-        returnWinners: Breakdown,
-        returnUnforcedErrors: Breakdown,
-        returnPoints: Breakdown,
-        returnPointsWon: Breakdown,
-      }),
-      rally: v.object({
-        approachShots: Outcome,
-        dropShots: Outcome,
-        groundStrokes: Outcome,
-        lobs: Outcome,
-        overheadStroke: Outcome,
-        passingShot: Outcome,
-        volleys: Outcome,
-      }),
+    stats: v.object({
+      player: StatsSchema,
+      opponent: StatsSchema,
     }),
-  }).index("by_date", ["date"]),
+  })
+    .index("by_date", ["date"])
+    .index("by_opponent", ["opponentId"]),
 
   players: defineTable({
     name: v.string(),

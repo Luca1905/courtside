@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * Generated `api` utility.
  *
@@ -15,6 +14,7 @@ import type {
 } from "convex/server";
 import type * as matches from "../matches.js";
 import type * as players from "../players.js";
+import type * as stats from "../stats.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -27,6 +27,7 @@ import type * as players from "../players.js";
 declare const fullApi: ApiFromModules<{
   matches: typeof matches;
   players: typeof players;
+  stats: typeof stats;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
