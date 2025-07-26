@@ -4,11 +4,11 @@ import { cssInterop } from "nativewind";
 export function iconWithClassname(icon: LucideIcon) {
   cssInterop(icon, {
     className: {
-      target: 'style',
+      target: "style",
       nativeStyleToProp: {
         color: true,
         opacity: true,
-      }
-    }
-  })
+      },
+    },
+  });
 }

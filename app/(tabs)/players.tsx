@@ -7,6 +7,7 @@ import { RefreshControl, FlatList, View, SafeAreaView } from "react-native";
 import { Search } from "~/lib/icons/Search";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
+import { ThemeToggle } from "~/components/ThemeToggle";
 
 function PlayerListItem({ player }: { player: Doc<"players"> }) {
   const matchResults = useQuery(api.players.getResultForPlayer, {
@@ -41,17 +42,21 @@ export default function PlayersPage() {
         keyExtractor={(item) => item._id}
         ListHeaderComponent={
           <View className="px-3 mb-2">
-            <View className="relative">
-              <Search
-                size={18}
-                className="absolute left-3 top-2.5 text-muted-foreground"
-              />
-              <Input
-                placeholder="Search players..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                className="pl-10 bg-muted/50"
-              />
+            <View className="flex-row items-center gap-2">
+              <View className="flex-1 relative">
+                <Search
+                  size={16}
+                  className="absolute left-[13px] top-[13px] text-muted-foreground"
+                />
+                <Input
+                  placeholder="Search players..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  className="pl-10 bg-muted/50 h-10"
+                />
+              </View>
+
+              <ThemeToggle />
             </View>
           </View>
         }
