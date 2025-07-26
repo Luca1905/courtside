@@ -1,9 +1,11 @@
+import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "convex/react";
-import { SafeAreaView, View, Pressable, ScrollView } from "react-native";
+import { SafeAreaView, View, ScrollView, Pressable } from "react-native";
 import { Card } from "~/components/ui/card";
 import { Text } from "~/components/ui/text";
 import { Badge } from "~/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
 import { api } from "~/convex/_generated/api";
 import type { Id } from "~/convex/_generated/dataModel";
 import { cn } from "~/lib/utils";
@@ -21,22 +23,16 @@ import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 export default function MatchScreen() {
   const router = useRouter();
   const { id: matchId } = useLocalSearchParams();
+  const [statsTab, setStatsTab] = useState("player");
 
   const match = useQuery(
     api.matches.getMatchWithOpponentById,
-    typeof matchId === "string"
-      ? {
-          matchId: matchId as Id<"matches">,
-        }
-      : "skip"
+    typeof matchId === "string" ? { matchId: matchId as Id<"matches"> } : "skip"
   );
 
-  // Loading state
   if (match === undefined) {
     return <MatchScreenSkeleton />;
   }
-
-  // No match found
   if (match === null) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
@@ -53,21 +49,16 @@ export default function MatchScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerLargeTitle: true,
-        }}
-      />
-
+      <Stack.Screen options={{ headerLargeTitle: true }} />
       <SafeAreaView className="flex-1 bg-background">
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
           contentContainerClassName="p-4 pb-8"
         >
+          {/* Win/Loss Banner & Summary */}
           <Card className="mb-4">
             <View className="p-4">
-              {/* Win/Loss Banner */}
               <View
                 className={cn(
                   "absolute top-0 left-0 right-0 h-1.5 rounded-t-lg",
@@ -75,7 +66,6 @@ export default function MatchScreen() {
                 )}
               />
               <View className="flex-row justify-between items-center">
-                {/* Score Section */}
                 <View className="flex-1">
                   <Text
                     className={cn(
@@ -94,7 +84,6 @@ export default function MatchScreen() {
                     {match.score.won ? "Victory" : "Defeat"}
                   </Text>
                 </View>
-                {/* Surface Badge */}
                 <Badge
                   className={cn(
                     "px-3 py-1.5 rounded-full flex-row items-center gap-1.5",
@@ -106,7 +95,6 @@ export default function MatchScreen() {
                       "bg-[#15803D]/10 border border-[#15803D]/30"
                   )}
                 >
-                  {/* Icons */}
                   {match.surface === "Hard" && (
                     <MaterialCommunityIcons
                       name="grid"
@@ -169,7 +157,6 @@ export default function MatchScreen() {
               Match Information
             </Text>
             <View className="flex-row flex-wrap px-4 pt-2 pb-4">
-              {/* Date */}
               <View className="w-1/2 flex-row items-center mb-4">
                 <Calendar size={16} className="text-muted-foreground mr-2" />
                 <View>
@@ -181,7 +168,6 @@ export default function MatchScreen() {
                   </Text>
                 </View>
               </View>
-              {/* Time */}
               <View className="w-1/2 flex-row items-center mb-4">
                 <Clock size={16} className="text-muted-foreground mr-2" />
                 <View>
@@ -193,7 +179,6 @@ export default function MatchScreen() {
                   </Text>
                 </View>
               </View>
-              {/* Venue */}
               <View className="w-1/2 flex-row items-center mb-4">
                 <MapPin size={16} className="text-muted-foreground mr-2" />
                 <View>
@@ -205,7 +190,6 @@ export default function MatchScreen() {
                   </Text>
                 </View>
               </View>
-              {/* Duration */}
               <View className="w-1/2 flex-row items-center mb-4">
                 <Clock size={16} className="text-muted-foreground mr-2" />
                 <View>
@@ -265,45 +249,103 @@ export default function MatchScreen() {
             </View>
           </Card>
 
-          {/* Match Statistics */}
+          {/* Match Statistics with Tabs */}
           <Card className="mb-4">
             <Text className="px-4 pt-4 pb-2 text-sm font-medium text-muted-foreground uppercase">
               Match Statistics
             </Text>
-            <View className="flex-row flex-wrap px-4 pt-2 pb-4">
-              <View className="w-1/2 items-center mb-4">
-                <Text className="text-2xs font-medium text-muted-foreground">
-                  Aces
-                </Text>
-                <Text className="text-lg font-extrabold text-green-600 mt-1">
-                  {match.stats.player.serve.aces.total}
-                </Text>
-              </View>
-              <View className="w-1/2 items-center mb-4">
-                <Text className="text-2xs font-medium text-muted-foreground">
-                  Double Faults
-                </Text>
-                <Text className="text-lg font-extrabold text-destructive mt-1">
-                  {match.stats.player.serve.doubleFaults.total}
-                </Text>
-              </View>
-              <View className="w-1/2 items-center mb-4">
-                <Text className="text-2xs font-medium text-muted-foreground">
-                  1st Serve %
-                </Text>
-                <Text className="text-lg font-extrabold text-foreground mt-1">
-                  {match.stats.player.serve.totalPoints.firstServe}%
-                </Text>
-              </View>
-              <View className="w-1/2 items-center mb-4">
-                <Text className="text-2xs font-medium text-muted-foreground">
-                  Break Points
-                </Text>
-                <Text className="text-lg font-extrabold text-foreground mt-1">
-                  {match.stats.player.overall.breakPoints.won}
-                </Text>
-              </View>
-            </View>
+            <Tabs
+              value={statsTab}
+              onValueChange={(tab) => setStatsTab(tab)}
+              className="w-full px-4 mt-2"
+            >
+              <TabsList className="flex-row w-full">
+                <TabsTrigger value="player" className="flex-1">
+                  <Text>You</Text>
+                </TabsTrigger>
+                <TabsTrigger value="opponent" className="flex-1">
+                  <Text>Opponent</Text>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="player">
+                <View className="flex-row flex-wrap pt-2 pb-4">
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Aces
+                    </Text>
+                    <Text className="text-lg font-extrabold text-green-600 mt-1">
+                      {match.stats.player.serve.aces.total}
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Double Faults
+                    </Text>
+                    <Text className="text-lg font-extrabold text-destructive mt-1">
+                      {match.stats.player.serve.doubleFaults.total}
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      1st Serve %
+                    </Text>
+                    <Text className="text-lg font-extrabold text-foreground mt-1">
+                      {match.stats.player.serve.totalPoints.firstServe}%
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Break Points Won
+                    </Text>
+                    <Text className="text-lg font-extrabold text-foreground mt-1">
+                      {match.stats.player.overall.breakPoints.won}
+                    </Text>
+                  </View>
+                </View>
+              </TabsContent>
+
+              <TabsContent value="opponent">
+                <View className="flex-row flex-wrap pt-2 pb-4">
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Aces
+                    </Text>
+                    <Text className="text-lg font-extrabold text-green-600 mt-1">
+                      {match.stats.opponent.overall.aces}
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Double Faults
+                    </Text>
+                    <Text className="text-lg font-extrabold text-destructive mt-1">
+                      {match.stats.opponent.overall.doubleFaults}
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      1st Serve %
+                    </Text>
+                    <Text className="text-lg font-extrabold text-foreground mt-1">
+                      {(
+                        match.stats.opponent.serve.totalPoints.firstServe /
+                        match.stats.opponent.serve.totalPoints.total
+                      ).toFixed(1)}
+                      %
+                    </Text>
+                  </View>
+                  <View className="w-1/2 items-center mb-4">
+                    <Text className="text-2xs font-medium text-muted-foreground">
+                      Break Points Won
+                    </Text>
+                    <Text className="text-lg font-extrabold text-foreground mt-1">
+                      {match.stats.opponent.overall.breakPoints.won}
+                    </Text>
+                  </View>
+                </View>
+              </TabsContent>
+            </Tabs>
           </Card>
 
           {/* Set-by-Set Score */}
