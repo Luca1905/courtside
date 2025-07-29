@@ -44,6 +44,7 @@ export default function TabLayout() {
           title: "Players",
         }}
       />
+      <Tabs.Screen name="experiments" />
     </Tabs>
   );
 }
