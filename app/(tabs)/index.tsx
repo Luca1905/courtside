@@ -10,6 +10,7 @@ import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
 
 import { useState } from "react";
+import { ResultBoard } from "~/components/ResultBoard";
 
 export default function HomeScreen() {
   const matchesWithOpponent = useQuery(api.matches.getAllMatchesWithOpponent);
@@ -35,44 +36,47 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">
-      <FlatList
-        data={filteredMatches}
-        keyExtractor={(item) => item._id}
-        contentContainerClassName="pb-16"
-        ListHeaderComponent={
-          <View className="px-3 mb-2">
-            <View className="flex-row items-center gap-2">
-              <View className="flex-1 relative">
-                <Search
-                  size={16}
-                  className="absolute left-[13px] top-[13px] text-muted-foreground"
-                />
-                <Input
-                  placeholder="Search players..."
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  className="pl-10 bg-muted/50 h-10"
-                />
-              </View>
-
-              <ThemeToggle />
-            </View>
-          </View>
-        }
-        renderItem={({ item }) => <MatchCard match={item} />}
-        ItemSeparatorComponent={() => <View className="h-2" />}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View className="flex-1 items-center justify-center p-8">
-            <Text className="text-muted-foreground text-center">
-              No matches found.
-            </Text>
-          </View>
-        }
-      />
+      {
+        // <FlatList
+        //   data={filteredMatches}
+        //   keyExtractor={(item) => item._id}
+        //   contentContainerClassName="pb-16"
+        //   ListHeaderComponent={
+        //     <View className="px-3 mb-2">
+        //       <View className="flex-row items-center gap-2">
+        //         <View className="flex-1 relative">
+        //           <Search
+        //             size={16}
+        //             className="absolute left-[13px] top-[13px] text-muted-foreground"
+        //           />
+        //           <Input
+        //             placeholder="Search players..."
+        //             value={searchQuery}
+        //             onChangeText={setSearchQuery}
+        //             className="pl-10 bg-muted/50 h-10"
+        //           />
+        //         </View>
+        //
+        //         <ThemeToggle />
+        //       </View>
+        //     </View>
+        //   }
+        //   renderItem={({ item }) => <MatchCard match={item} />}
+        //   ItemSeparatorComponent={() => <View className="h-2" />}
+        //   refreshControl={
+        //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        //   }
+        //   showsVerticalScrollIndicator={false}
+        //   ListEmptyComponent={
+        //     <View className="flex-1 items-center justify-center p-8">
+        //       <Text className="text-muted-foreground text-center">
+        //         No matches found.
+        //       </Text>
+        //     </View>
+        //   }
+        // />
+      }
+      <ResultBoard />
     </SafeAreaView>
   );
 }

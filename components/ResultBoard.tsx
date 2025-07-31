@@ -1,137 +1,155 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Dimensions,
+  Platform,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import * as Haptics from "expo-haptics";
+import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+const BOARD_WIDTH = Math.min(width * 0.9, 420);
+
+type Score = {
+  guest: number;
+  home: number;
+};
 
 export function ResultBoard() {
-  const [scores, setScores] = useState([
-    { guest: 0, home: 0 },
-    { guest: 0, home: 0 },
-    { guest: 0, home: 0 },
+  const insets = useSafeAreaInsets();
+  const [scores, setScores] = useState<Score[]>([
+    {
+      guest: 0,
+      home: 0,
+    },
+    {
+      guest: 0,
+      home: 0,
+    },
+    {
+      guest: 0,
+      home: 0,
+    },
   ]);
-  const updateScore = (
-    index: number,
-    team: "guest" | "home",
-    increment: boolean
-  ) => {
-    setScores((prev) =>
-      prev.map((score, i) => {
-        if (i === index) {
-          const newValue = increment
-            ? Math.min(10, score[team] + 1)
-            : Math.max(0, score[team] - 1);
-          return { ...score, [team]: newValue };
-        }
-        return score;
-      })
-    );
-  };
+
+  const triggerHaptic = useCallback(() => {
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  }, []);
+
+  const updateScore = useCallback(
+    (index: number, team: "guest" | "home", increment: boolean) => {
+      triggerHaptic();
+      setScores((prev) =>
+        prev.map((score, i) => {
+          if (i === index) {
+            const newValue = increment
+              ? Math.min(10, score[team] + 1)
+              : Math.max(0, score[team] - 1);
+            return { ...score, [team]: newValue };
+          }
+          return score;
+        })
+      );
+    },
+    [triggerHaptic]
+  );
+
+  const ScoreButton = ({
+    onPress,
+    icon,
+  }: {
+    onPress: () => void;
+    icon: "plus" | "minus";
+  }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      className="h-12 w-12 items-center justify-center rounded-lg bg-gray-300 active:bg-gray-400"
+    >
+      <MaterialCommunityIcons name={icon} size={18} color="black" />
+    </TouchableOpacity>
+  );
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-gray-100 p-4">
-      <StatusBar barStyle="dark-content" backgroundColor="#f3f4f6" />
-
-      <View className="relative">
-        {/* Main Scoreboard Body */}
-        <View className="relative w-80 rounded-xl bg-green-600 p-6 shadow-lg shadow-black/30 md:w-96 md:p-8">
-          {/* Corner Screws */}
-          <View className="absolute -left-2 -top-2 h-4 w-4 rounded-full border-2 border-gray-500 bg-gray-400" />
-          <View className="absolute -right-2 -top-2 h-4 w-4 rounded-full border-2 border-gray-500 bg-gray-400" />
-          <View className="absolute -bottom-2 -left-2 h-4 w-4 rounded-full border-2 border-gray-500 bg-gray-400" />
-          <View className="absolute -bottom-2 -right-2 h-4 w-4 rounded-full border-2 border-gray-500 bg-gray-400" />
-
-          {/* Score Displays */}
-          <View className="space-y-6">
-            {scores.map((score, index) => (
-              <View key={index} className="relative">
-                {/* Score Display Panel */}
-                <View className="rounded-xl border-2 border-gray-300 bg-gray-200 p-4">
-                  <View className="flex-row items-center justify-between">
-                    {/* Guest Score */}
-                    <View className="items-center">
-                      <TouchableOpacity
-                        onPress={() => updateScore(index, "guest", true)}
-                        className="min-w-[32px] items-center rounded-lg p-2 active:bg-gray-300"
-                      >
-                        <MaterialCommunityIcons
-                          name="plus"
-                          size={12}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                      <Text className="text-5xl font-bold text-black md:text-6xl">
-                        {score.guest}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => updateScore(index, "guest", false)}
-                        className="min-w-[32px] items-center rounded-lg p-2 active:bg-gray-300"
-                      >
-                        <MaterialCommunityIcons
-                          name="minus"
-                          size={12}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                    </View>
-
-                    {/* Center Dots */}
-                    <View className="items-center space-y-2">
-                      <View className="h-3 w-3 rounded-full border border-green-600 bg-green-500" />
-                      <View className="h-3 w-3 rounded-full border border-green-600 bg-green-500" />
-                    </View>
-
-                    {/* Home Score */}
-                    <View className="items-center">
-                      <TouchableOpacity
-                        onPress={() => updateScore(index, "home", true)}
-                        className="min-w-[32px] items-center rounded-lg p-2 active:bg-gray-300"
-                      >
-                        <MaterialCommunityIcons
-                          name="plus"
-                          size={12}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                      <Text className="text-5xl font-bold text-black md:text-6xl">
-                        {score.home}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => updateScore(index, "home", false)}
-                        className="min-w-[32px] items-center rounded-lg p-2 active:bg-gray-300"
-                      >
-                        <MaterialCommunityIcons
-                          name="minus"
-                          size={12}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+      }}
+      className="items-center justify-center px-4"
+    >
+      <View
+        style={{ width: BOARD_WIDTH }}
+        className="rounded-2xl bg-green-600 p-6 shadow-xl"
+      >
+        {scores.map((score, index) => (
+          <Animated.View
+            key={index}
+            className="mb-4 rounded-xl bg-gray-200 p-5 shadow-inner"
+          >
+            <View className="flex-row">
+              {/* Guest Side */}
+              <View className="flex-1 flex-row items-center justify-start">
+                <View className="mr-4 items-center gap-3">
+                  <ScoreButton
+                    onPress={() => updateScore(index, "guest", true)}
+                    icon="plus"
+                  />
+                  <ScoreButton
+                    onPress={() => updateScore(index, "guest", false)}
+                    icon="minus"
+                  />
                 </View>
-
-                {/* Side Screws */}
-                <View className="absolute -left-4 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-gray-400 bg-gray-300" />
-                <View className="absolute -right-4 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-gray-400 bg-gray-300" />
+                <View className="min-w-[80px] items-center">
+                  <Text className="text-6xl font-bold tabular-nums">
+                    {score.guest}
+                  </Text>
+                </View>
               </View>
-            ))}
 
-            {/* Gast Heim Labels */}
-            <View className="mt-8 pt-4">
-              <View className="flex-row justify-between px-4">
-                <Text className="text-2xl font-bold tracking-widest text-white md:text-3xl">
-                  Guest
-                </Text>
-                <Text className="text-2xl font-bold tracking-widest text-white md:text-3xl">
-                  Home
-                </Text>
+              {/* Separator */}
+              <View
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-1"
+                style={{
+                  transform: [{ translateX: -4 }, { translateY: -8 }],
+                }}
+              >
+                <View className="h-2 w-2 rounded-full bg-green-700" />
+                <View className="h-2 w-2 rounded-full bg-green-700" />
+              </View>
+
+              {/* Home */}
+              <View className="flex-1 flex-row items-center justify-end">
+                <View className="min-w-[80px] items-center">
+                  <Text className="text-6xl font-bold tabular-nums">
+                    {score.home}
+                  </Text>
+                </View>
+                <View className="ml-4 items-center gap-3">
+                  <ScoreButton
+                    onPress={() => updateScore(index, "home", true)}
+                    icon="plus"
+                  />
+                  <ScoreButton
+                    onPress={() => updateScore(index, "home", false)}
+                    icon="minus"
+                  />
+                </View>
               </View>
             </View>
-          </View>
+          </Animated.View>
+        ))}
+
+        <View className="flex-row justify-between px-24 pt-4">
+          <Text className="text-xl font-bold text-white">Guest</Text>
+          <Text className="text-xl font-bold text-white">Home</Text>
         </View>
       </View>
     </SafeAreaView>
