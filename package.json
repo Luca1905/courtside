@@ -2,6 +2,7 @@
   "name": "courtside",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -9,14 +10,15 @@
     "ios": "expo run:ios",
     "ios:device": "expo run:ios --device",
     "web": "expo start --web",
-    "lint": "expo lint",
-    "lint:fix": "expo lint --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "backend:dev": "bunx convex dev",
     "backend:deploy": "bunx convex deploy",
     "prepare": "husky install"
   },
   "dependencies": {
+    "@eslint/js": "^9.32.0",
     "@expo/vector-icons": "^14.1.0",
     "@hookform/resolvers": "^5.2.0",
     "@react-native-community/datetimepicker": "8.4.1",
@@ -62,12 +64,13 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "tailwind-merge": "^3.3.1",
+    "typescript-eslint": "^8.38.0",
     "zod": "^4.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
-    "eslint": "^9.25.0",
+    "eslint": "^9.32.0",
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
@@ -76,7 +79,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.17",
-    "typescript": "~5.8.3"
+    "typescript": "^5.9.2"
   },
   "private": true,
   "lint-staged": {

@@ -17,7 +17,7 @@ import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { User } from "~/lib/icons/User";
 import { cn } from "~/lib/utils";
-import { MaterialCommunityIconNames } from "~/lib/icons/definitions";
+import type { MaterialCommunityIconNames } from "~/lib/icons/definitions";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,22 +49,24 @@ const formSchema = z
     surface: z.enum(SURFACES),
     sets: z.array(setString).min(2).max(5),
   })
-  .superRefine((data, ctx) => {
-    if (data.endTime <= data.startTime) {
-      ctx.addIssue({
+  .check((ctx) => {
+    if (ctx.value.endTime <= ctx.value.startTime) {
+      ctx.issues.push({
         code: "custom",
+        input: { startTime: ctx.value.startTime, endTime: ctx.value.endTime },
         path: ["endTime"],
         message: "End time must be after start time",
       });
     }
 
-    const bestOf = data.sets.length > 3 ? 5 : 3;
-    const res = validateMatch(bestOf, data.sets);
+    const bestOf = ctx.value.sets.length > 3 ? 5 : 3;
+    const res = validateMatch(bestOf, ctx.value.sets);
     if (!res.valid) {
       res.errors.forEach((e) =>
-        ctx.addIssue({
+        ctx.issues.push({
           code: "custom",
           path: ["sets"],
+          input: ctx.value.sets,
           message: e,
         })
       );
@@ -163,7 +165,7 @@ export default function AddMatchPage() {
     watch,
     setValue,
     trigger,
-  } = useForm<FormData>({
+  } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       opponentId: "",
@@ -175,6 +177,8 @@ export default function AddMatchPage() {
       sets: ["", ""],
     },
   });
+
+  useEffect(() => console.log(errors), [errors]);
 
   // Modal states
   const [showOpponentPicker, setShowOpponentPicker] = useState(false);
@@ -213,6 +217,7 @@ export default function AddMatchPage() {
         { text: "OK", onPress: () => router.back() },
       ]);
     } catch (error) {
+      console.error(error);
       Alert.alert("Error", "Failed to add match. Please try again.");
     }
   };

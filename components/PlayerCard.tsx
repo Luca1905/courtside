@@ -1,10 +1,10 @@
 import { Pressable, View } from "react-native";
-import { Doc } from "~/convex/_generated/dataModel";
+import type { Doc } from "~/convex/_generated/dataModel";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Text } from "./ui/text";
 import { Trophy } from "~/lib/icons/Trophy";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import type MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 
 interface PlayerCardProps {

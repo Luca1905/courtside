@@ -16,11 +16,9 @@ export const getById = query({
 export const getAll = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
-      .query("players")
-      .collect();
-  }
-})
+    return await ctx.db.query("players").collect();
+  },
+});
 
 export const getResultForPlayer = query({
   args: {
@@ -31,12 +29,15 @@ export const getResultForPlayer = query({
       .query("matches")
       .filter((q) => q.eq(q.field("opponentId"), playerId))
       .collect();
-    const results = playedMatches.reduce((acc, { score: { won } }) => {
-      if (won) acc.wins++;
-      else acc.losses++;
-      return acc;
-    }, { wins: 0, losses: 0 });
+    const results = playedMatches.reduce(
+      (acc, { score: { won } }) => {
+        if (won) acc.wins++;
+        else acc.losses++;
+        return acc;
+      },
+      { wins: 0, losses: 0 }
+    );
 
     return results;
-  }
-})
+  },
+});

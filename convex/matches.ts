@@ -1,6 +1,7 @@
 import { v } from "convex/values";
-import { query, QueryCtx } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
+import { query } from "./_generated/server";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { Prettify } from "../lib/utils";
 
 const MATCHES_COLLECTION = "matches";
