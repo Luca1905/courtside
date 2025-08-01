@@ -1,11 +1,16 @@
-const { defineConfig } = require("eslint/config");
-const expoConfig = require("eslint-config-expo/flat");
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
+import eslint from "@eslint/js";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import teslint from "typescript-eslint";
 
-module.exports = defineConfig([
-	expoConfig,
-	eslintPluginPrettierRecommended,
-	{
-		ignores: ["dist/*"],
-	},
+export default teslint.config([
+  eslint.configs.recommended,
+  teslint.configs.recommended,
+  eslintPluginPrettierRecommended,
+  {
+    ignores: ["dist/*", "convex/_generated/*"],
+    rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);

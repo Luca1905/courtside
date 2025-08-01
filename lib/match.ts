@@ -1,4 +1,4 @@
-import { Doc } from "~/convex/_generated/dataModel";
+import type { Doc } from "~/convex/_generated/dataModel";
 import type { MatchWithOpponentRecord } from "~/convex/matches";
 
 export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {

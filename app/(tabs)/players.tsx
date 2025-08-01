@@ -1,7 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
 import { PlayerCard } from "~/components/PlayerCard";
-import { Doc } from "~/convex/_generated/dataModel";
+import type { Doc } from "~/convex/_generated/dataModel";
 import { useState } from "react";
 import { RefreshControl, FlatList, View, SafeAreaView } from "react-native";
 import { Search } from "~/lib/icons/Search";

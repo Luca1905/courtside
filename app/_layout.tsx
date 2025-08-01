@@ -1,7 +1,7 @@
 import "~/styles/global.css";
 
+import type { Theme } from "@react-navigation/native";
 import {
-  Theme,
   ThemeProvider,
   DefaultTheme,
   DarkTheme,

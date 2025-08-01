@@ -72,7 +72,11 @@ export function validateMatch(bestOf: 3 | 5, sets: string[]): ValidationResult {
       errors.push(`set ${i + 1}: ${msg}`);
       return;
     }
-    parsed.g1 > parsed.g2 ? p1++ : p2++;
+    if (parsed.g1 > parsed.g2) {
+      p1++;
+    } else {
+      p2++;
+    }
 
     const need = bestOf === 3 ? 2 : 3;
     if (decidedAt === null && (p1 === need || p2 === need)) decidedAt = i;

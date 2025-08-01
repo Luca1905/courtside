@@ -8,10 +8,10 @@ import { LineChart } from "react-native-chart-kit";
 import { MatchCard } from "~/components/MatchCard";
 import { ArrowUp, ArrowDown } from "~/lib/icons/Arrow";
 import { cn } from "~/lib/utils";
-import { Id } from "~/convex/_generated/dataModel";
+import type { Id } from "~/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
-import { MaterialCommunityIconNames } from "~/lib/icons/definitions";
+import type { MaterialCommunityIconNames } from "~/lib/icons/definitions";
 import PlayerScreenSkeleton from "~/components/PlayerScreenSkeleton";
 
 export default function PlayerDetailsPage() {
