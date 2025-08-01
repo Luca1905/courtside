@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar,
   Dimensions,
   Platform,
 } from "react-native";
@@ -12,6 +11,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { cn } from "~/lib/utils";
 
 const { width } = Dimensions.get("window");
 const BOARD_WIDTH = Math.min(width * 0.9, 420);
@@ -21,7 +21,7 @@ type Score = {
   home: number;
 };
 
-export function ResultBoard() {
+export function ResultBoard(props: { className: string }) {
   const insets = useSafeAreaInsets();
   const [scores, setScores] = useState<Score[]>([
     {
@@ -83,7 +83,7 @@ export function ResultBoard() {
         flex: 1,
         paddingTop: insets.top,
       }}
-      className="items-center justify-center px-4"
+      className={cn("items-center justify-center px-4", props.className)}
     >
       <View
         style={{ width: BOARD_WIDTH }}
