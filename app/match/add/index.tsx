@@ -24,15 +24,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { validateMatch } from "~/lib/validator";
 import DatePicker from "react-native-date-picker";
 import { ResultBoard } from "~/components/ResultBoard";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
-
-const MOCK_OPPONENTS = [
-  { id: "1", name: "Marie Weber", club: "Tennis Club Berlin" },
-  { id: "2", name: "Thomas Müller", club: "SV Tennis" },
-  { id: "3", name: "Lisa Schmidt", club: "TC Blau-Weiß" },
-];
 
 const setString = z
   .string()
@@ -180,6 +176,8 @@ export default function AddMatchPage() {
 
   useEffect(() => console.log(errors), [errors]);
 
+  const opponents = useQuery(api.players.getAll);
+
   // Modal states
   const [showOpponentPicker, setShowOpponentPicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -188,16 +186,20 @@ export default function AddMatchPage() {
 
   // Watch form values for display and calculations
   const watchedValues = watch();
-  const selectedOpponent = MOCK_OPPONENTS.find(
-    (o) => o.id === watchedValues.opponentId
+  const selectedOpponent = opponents?.find(
+    (o) => o._id === watchedValues.opponentId
   );
   const durationLabel = useDuration(
     watchedValues.startTime,
     watchedValues.endTime
   );
 
-  const selectOpponent = (opponent: (typeof MOCK_OPPONENTS)[0]) => {
-    setValue("opponentId", opponent.id);
+  if (!opponents) {
+    return <View />;
+  }
+
+  const selectOpponent = (opponent: (typeof opponents)[0]) => {
+    setValue("opponentId", opponent._id);
     setShowOpponentPicker(false);
     trigger("opponentId");
   };
@@ -458,9 +460,9 @@ export default function AddMatchPage() {
           <View className="p-6">
             <Text className="text-xl font-bold mb-4">Select Opponent</Text>
             <ScrollView>
-              {MOCK_OPPONENTS.map((opponent) => (
+              {opponents.map((opponent) => (
                 <Pressable
-                  key={opponent.id}
+                  key={opponent._id}
                   onPress={() => selectOpponent(opponent)}
                   className="p-4 mb-3 bg-muted/50 rounded-lg"
                 >
