@@ -3,9 +3,10 @@ import {
   ScrollView,
   View,
   Alert,
-  SafeAreaView,
   Modal,
   Pressable,
+  Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Card } from "~/components/ui/card";
@@ -112,6 +113,11 @@ export default function AddMatchPage() {
     left: 12,
     right: 12,
   };
+  const screenHeight = Dimensions.get("window").height;
+  const firstScreenMinHeight = Math.max(
+    0,
+    screenHeight - (insets.top + insets.bottom) - 100
+  );
 
   if (!opponents) {
     return <View />;
@@ -141,13 +147,18 @@ export default function AddMatchPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <View className="flex-1 bg-background">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 12, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
-        <ResultBoard className="p-6 rounded-2xl shadow-sm" />
+        <View
+          style={{ minHeight: firstScreenMinHeight }}
+          className="items-stretch justify-center px-6"
+        >
+          <ResultBoard className="p-0 rounded-2xl shadow-sm" />
+        </View>
 
         <Card className="p-6 rounded-2xl shadow-sm mt-6">
           <View className="flex-row items-center gap-3 mb-4">
@@ -453,6 +464,6 @@ export default function AddMatchPage() {
         }}
         onCancel={() => setShowEndPicker(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 }

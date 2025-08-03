@@ -21,21 +21,12 @@ type Score = {
   home: number;
 };
 
-export function ResultBoard(props: { className: string }) {
+export function ResultBoard(props: { className?: string }) {
   const insets = useSafeAreaInsets();
   const [scores, setScores] = useState<Score[]>([
-    {
-      guest: 0,
-      home: 0,
-    },
-    {
-      guest: 0,
-      home: 0,
-    },
-    {
-      guest: 0,
-      home: 0,
-    },
+    { guest: 0, home: 0 },
+    { guest: 0, home: 0 },
+    { guest: 0, home: 0 },
   ]);
 
   const triggerHaptic = useCallback(() => {
@@ -80,7 +71,6 @@ export function ResultBoard(props: { className: string }) {
   return (
     <SafeAreaView
       style={{
-        flex: 1,
         paddingTop: insets.top,
       }}
       className={cn("items-center justify-center px-4", props.className)}
@@ -95,7 +85,6 @@ export function ResultBoard(props: { className: string }) {
             className="mb-4 rounded-xl bg-gray-200 p-5 shadow-inner"
           >
             <View className="flex-row">
-              {/* Guest Side */}
               <View className="flex-1 flex-row items-center justify-start">
                 <View className="mr-4 items-center gap-3">
                   <ScoreButton
@@ -114,7 +103,6 @@ export function ResultBoard(props: { className: string }) {
                 </View>
               </View>
 
-              {/* Separator */}
               <View
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-1"
                 style={{
@@ -125,7 +113,6 @@ export function ResultBoard(props: { className: string }) {
                 <View className="h-2 w-2 rounded-full bg-green-700" />
               </View>
 
-              {/* Home */}
               <View className="flex-1 flex-row items-center justify-end">
                 <View className="min-w-[80px] items-center">
                   <Text className="text-6xl font-bold tabular-nums">
