@@ -34,14 +34,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Doc } from "~/convex/_generated/dataModel";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
-
-const setString = z
-  .string()
-  .trim()
-  .regex(/^\d+-\d+$/, "Use X-Y (6-4, 7-6(8-6) …)");
 
 const formSchema = z.object({
   opponentId: z.string().min(1, "Pick an opponent"),
@@ -50,7 +46,14 @@ const formSchema = z.object({
   endTime: z.date(),
   type: z.enum(MATCH_TYPES),
   surface: z.enum(SURFACES),
-  sets: z.array(setString).min(2).max(5),
+  sets: z
+    .array(
+      z.object({
+        guest: z.number(),
+        home: z.number(),
+      })
+    )
+    .length(3),
 });
 type FormData = z.infer<typeof formSchema>;
 
@@ -86,7 +89,20 @@ export default function AddMatchPage() {
       endTime: new Date(),
       type: MATCH_TYPES[0],
       surface: SURFACES[0],
-      sets: ["", ""],
+      sets: [
+        {
+          home: 0,
+          guest: 0,
+        },
+        {
+          home: 0,
+          guest: 0,
+        },
+        {
+          home: 0,
+          guest: 0,
+        },
+      ],
     },
   });
 
@@ -119,11 +135,7 @@ export default function AddMatchPage() {
     screenHeight - (insets.top + insets.bottom) - 100
   );
 
-  if (!opponents) {
-    return <View />;
-  }
-
-  const handleSelectOpponent = (opponent: (typeof opponents)[0]) => {
+  const handleSelectOpponent = (opponent: Doc<"players">) => {
     setValue("opponentId", opponent._id);
     setShowOpponentPicker(false);
     trigger("opponentId");
@@ -157,7 +169,22 @@ export default function AddMatchPage() {
           style={{ minHeight: firstScreenMinHeight }}
           className="items-stretch justify-center px-6"
         >
-          <ResultBoard className="p-0 rounded-2xl shadow-sm" />
+          <Controller
+            control={control}
+            name="sets"
+            render={({ field: { onChange, value } }) => (
+              <ResultBoard
+                score={value}
+                className="p-0 rounded-2xl shadow-sm"
+                onChange={onChange}
+              />
+            )}
+          />
+          {errors.sets && (
+            <Text className="text-destructive text-sm mt-2">
+              {errors.sets.message}
+            </Text>
+          )}
         </View>
 
         <Card className="p-6 rounded-2xl shadow-sm mt-6">
@@ -398,13 +425,15 @@ export default function AddMatchPage() {
           </Text>
         </Button>
       </ScrollView>
+      {/* End of page */}
 
+      {/* Modals */}
       <Modal visible={showOpponentPicker} animationType="slide">
         <SafeAreaView className="flex-1 bg-background">
           <View className="p-6">
             <Text className="text-xl font-bold mb-4">Select Opponent</Text>
             <ScrollView>
-              {opponents.map((opponent) => (
+              {opponents?.map((opponent) => (
                 <Pressable
                   key={opponent._id}
                   onPress={() => handleSelectOpponent(opponent)}

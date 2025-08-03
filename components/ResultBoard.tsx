@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -9,25 +9,28 @@ import {
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as Haptics from "expo-haptics";
-import Animated from "react-native-reanimated";
+import Animated, { clamp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cn } from "~/lib/utils";
 
 const { width } = Dimensions.get("window");
 const BOARD_WIDTH = Math.min(width * 0.9, 420);
 
-type Score = {
+export type Score = {
   guest: number;
   home: number;
 };
 
-export function ResultBoard(props: { className?: string }) {
+export function ResultBoard({
+  score,
+  className,
+  onChange,
+}: {
+  score: Score[];
+  className?: string;
+  onChange: (score: Score[]) => void;
+}) {
   const insets = useSafeAreaInsets();
-  const [scores, setScores] = useState<Score[]>([
-    { guest: 0, home: 0 },
-    { guest: 0, home: 0 },
-    { guest: 0, home: 0 },
-  ]);
 
   const triggerHaptic = useCallback(() => {
     if (Platform.OS === "ios") {
@@ -35,23 +38,23 @@ export function ResultBoard(props: { className?: string }) {
     }
   }, []);
 
-  const updateScore = useCallback(
-    (index: number, team: "guest" | "home", increment: boolean) => {
-      triggerHaptic();
-      setScores((prev) =>
-        prev.map((score, i) => {
-          if (i === index) {
-            const newValue = increment
-              ? Math.min(10, score[team] + 1)
-              : Math.max(0, score[team] - 1);
-            return { ...score, [team]: newValue };
-          }
-          return score;
-        })
-      );
-    },
-    [triggerHaptic]
-  );
+  const updateScore = (
+    index: number,
+    team: "guest" | "home",
+    increment: boolean
+  ): void => {
+    triggerHaptic();
+
+    const newScores = score.map((set, idx) => {
+      if (idx !== index) return set;
+
+      const delta = increment ? 1 : -1;
+      const newValue = clamp(set[team] + delta, 0, 10);
+      return { ...set, [team]: newValue };
+    });
+
+    onChange(newScores);
+  };
 
   const ScoreButton = ({
     onPress,
@@ -73,13 +76,13 @@ export function ResultBoard(props: { className?: string }) {
       style={{
         paddingTop: insets.top,
       }}
-      className={cn("items-center justify-center px-4", props.className)}
+      className={cn("items-center justify-center px-4", className)}
     >
       <View
         style={{ width: BOARD_WIDTH }}
         className="rounded-2xl bg-green-600 p-6 shadow-xl"
       >
-        {scores.map((score, index) => (
+        {score.map((score, index) => (
           <Animated.View
             key={index}
             className="mb-4 rounded-xl bg-gray-200 p-5 shadow-inner"

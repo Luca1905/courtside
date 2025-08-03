@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
+
+export function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(n, min));
+}
