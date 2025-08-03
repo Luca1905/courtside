@@ -1,11 +1,10 @@
-import nwPreset from "nativewind/preset";
-import { hairlineWidth } from "nativewind/theme";
+const { hairlineWidth } = require("nativewind/theme");
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: "class",
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
-  presets: [nwPreset],
+  presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
