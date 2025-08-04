@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import type { QueryCtx } from "./_generated/server";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { Prettify } from "../lib/utils";
 
@@ -107,5 +107,13 @@ export const getMatchWithOpponentById = query({
     const match = await fetchMatchById(ctx, matchId);
     if (!match) return null;
     return await populateMatchWithOpponent(ctx, match);
+  },
+});
+
+// --- Mutations --------------------------------------------------
+
+export const addMatch = mutation({
+  handler: async (ctx, match: Doc<"matches">) => {
+    await ctx.db.insert("matches", match);
   },
 });

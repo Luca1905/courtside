@@ -87,10 +87,12 @@ export default defineSchema({
       precipitation: v.number(),
       humidity: v.number(),
     }),
-    stats: v.object({
-      player: StatsSchema,
-      opponent: StatsSchema,
-    }),
+    stats: v.optional(
+      v.object({
+        player: StatsSchema,
+        opponent: StatsSchema,
+      })
+    ),
   })
     .index("by_date", ["date"])
     .index("by_opponent", ["opponentId"]),

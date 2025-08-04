@@ -275,7 +275,7 @@ export default function MatchScreen() {
                       Aces
                     </Text>
                     <Text className="text-lg font-extrabold text-green-600 mt-1">
-                      {match.stats.player.serve.aces.total}
+                      {match.stats?.player.serve.aces.total ?? "--"}
                     </Text>
                   </View>
                   <View className="w-1/2 items-center mb-4">
@@ -283,7 +283,7 @@ export default function MatchScreen() {
                       Double Faults
                     </Text>
                     <Text className="text-lg font-extrabold text-destructive mt-1">
-                      {match.stats.player.serve.doubleFaults.total}
+                      {match.stats?.player.serve.doubleFaults.total ?? "--"}
                     </Text>
                   </View>
                   <View className="w-1/2 items-center mb-4">
@@ -291,7 +291,8 @@ export default function MatchScreen() {
                       1st Serve %
                     </Text>
                     <Text className="text-lg font-extrabold text-foreground mt-1">
-                      {match.stats.player.serve.totalPoints.firstServe}%
+                      {match.stats?.player.serve.totalPoints.firstServe ?? "--"}
+                      %
                     </Text>
                   </View>
                   <View className="w-1/2 items-center mb-4">
@@ -299,7 +300,7 @@ export default function MatchScreen() {
                       Break Points Won
                     </Text>
                     <Text className="text-lg font-extrabold text-foreground mt-1">
-                      {match.stats.player.overall.breakPoints.won}
+                      {match.stats?.player.overall.breakPoints.won ?? "--"}
                     </Text>
                   </View>
                 </View>
@@ -312,7 +313,7 @@ export default function MatchScreen() {
                       Aces
                     </Text>
                     <Text className="text-lg font-extrabold text-green-600 mt-1">
-                      {match.stats.opponent.overall.aces}
+                      {match.stats?.opponent.overall.aces ?? "--"}
                     </Text>
                   </View>
                   <View className="w-1/2 items-center mb-4">
@@ -320,7 +321,7 @@ export default function MatchScreen() {
                       Double Faults
                     </Text>
                     <Text className="text-lg font-extrabold text-destructive mt-1">
-                      {match.stats.opponent.overall.doubleFaults}
+                      {match.stats?.opponent.overall.doubleFaults ?? "--"}
                     </Text>
                   </View>
                   <View className="w-1/2 items-center mb-4">
@@ -328,10 +329,12 @@ export default function MatchScreen() {
                       1st Serve %
                     </Text>
                     <Text className="text-lg font-extrabold text-foreground mt-1">
-                      {(
-                        match.stats.opponent.serve.totalPoints.firstServe /
-                        match.stats.opponent.serve.totalPoints.total
-                      ).toFixed(1)}
+                      {match.stats
+                        ? (
+                            match.stats.opponent.serve.totalPoints.firstServe /
+                            match.stats.opponent.serve.totalPoints.total
+                          ).toFixed(1)
+                        : "--"}
                       %
                     </Text>
                   </View>
@@ -340,7 +343,7 @@ export default function MatchScreen() {
                       Break Points Won
                     </Text>
                     <Text className="text-lg font-extrabold text-foreground mt-1">
-                      {match.stats.opponent.overall.breakPoints.won}
+                      {match.stats?.opponent.overall.breakPoints.won ?? "--"}
                     </Text>
                   </View>
                 </View>
@@ -353,7 +356,7 @@ export default function MatchScreen() {
             <Text className="px-4 pt-4 pb-2 text-sm font-medium text-muted-foreground uppercase">
               Set-by-Set Score
             </Text>
-            <View className="flex-row space-x-3 px-4 pt-2 pb-4">
+            <View className="flex-row gap-3 px-4 pt-2 pb-4">
               {match.score.sets.map((set, idx) => (
                 <View
                   key={idx}

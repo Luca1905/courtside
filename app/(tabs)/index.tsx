@@ -28,6 +28,7 @@ export default function HomeScreen() {
       m.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // TODO
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);

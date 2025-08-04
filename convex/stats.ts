@@ -36,6 +36,9 @@ export const getPlayerStats = query({
     let totalFirstServeInForWon = 0;
 
     for (const match of matches) {
+      if (!match.stats) {
+        continue;
+      }
       const stats = match.stats.player;
       const firstServePct =
         stats.overall.firstServes.total > 0
