@@ -8,25 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		262AF15B86793DF55E912E0B /* libPods-courtside.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B5F2453841AED4A69E33A15 /* libPods-courtside.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		971624551265EA8CCB4B1A34 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 21E45D27701E914F224D131B /* PrivacyInfo.xcprivacy */; };
+		3FD21F53A6F314C325DD950A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D118E067F2FB839217FAB3A8 /* PrivacyInfo.xcprivacy */; };
+		808E2250668D3DF766FBA578 /* libPods-courtside.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C53931DA8DE08792B2406D00 /* libPods-courtside.a */; };
+		97142B95CD92BFDEA1CD8C84 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215890C868DBF003A4E74E26 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F9DDC83063999A6B12CCBAFB /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853058ADA5F1A323640E202C /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* courtside.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = courtside.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = courtside/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = courtside/Info.plist; sourceTree = "<group>"; };
-		1FCE1A4CED63F8950E06D06D /* Pods-courtside.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-courtside.debug.xcconfig"; path = "Target Support Files/Pods-courtside/Pods-courtside.debug.xcconfig"; sourceTree = "<group>"; };
-		21E45D27701E914F224D131B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = courtside/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2C73926EC9216BD2840C65EA /* Pods-courtside.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-courtside.release.xcconfig"; path = "Target Support Files/Pods-courtside/Pods-courtside.release.xcconfig"; sourceTree = "<group>"; };
-		853058ADA5F1A323640E202C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-courtside/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		8B5F2453841AED4A69E33A15 /* libPods-courtside.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-courtside.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		215890C868DBF003A4E74E26 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-courtside/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		65491829932521E35E403E4D /* Pods-courtside.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-courtside.release.xcconfig"; path = "Target Support Files/Pods-courtside/Pods-courtside.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = courtside/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		C53931DA8DE08792B2406D00 /* libPods-courtside.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-courtside.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0AE8A652D4918E10C66DE2D /* Pods-courtside.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-courtside.debug.xcconfig"; path = "Target Support Files/Pods-courtside/Pods-courtside.debug.xcconfig"; sourceTree = "<group>"; };
+		D118E067F2FB839217FAB3A8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = courtside/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = courtside/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* courtside-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "courtside-Bridging-Header.h"; path = "courtside/courtside-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				262AF15B86793DF55E912E0B /* libPods-courtside.a in Frameworks */,
+				808E2250668D3DF766FBA578 /* libPods-courtside.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				21E45D27701E914F224D131B /* PrivacyInfo.xcprivacy */,
+				D118E067F2FB839217FAB3A8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = courtside;
 			sourceTree = "<group>";
@@ -62,17 +62,17 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				8B5F2453841AED4A69E33A15 /* libPods-courtside.a */,
+				C53931DA8DE08792B2406D00 /* libPods-courtside.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5F08C7B308475DE839627850 /* courtside */ = {
+		75EFBBF5AE7EF5076E06811F /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				853058ADA5F1A323640E202C /* ExpoModulesProvider.swift */,
+				E8AC2C3A94FD02B3A691177C /* courtside */,
 			);
-			name = courtside;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +89,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				EBF9B476EBC9E13A028DA01B /* Pods */,
-				EE6EE6C0C84AA90A3E8500C2 /* ExpoModulesProviders */,
+				93ADEDF8F6FDE69EF13E8959 /* Pods */,
+				75EFBBF5AE7EF5076E06811F /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,6 +105,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		93ADEDF8F6FDE69EF13E8959 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D0AE8A652D4918E10C66DE2D /* Pods-courtside.debug.xcconfig */,
+				65491829932521E35E403E4D /* Pods-courtside.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,21 +124,12 @@
 			path = courtside/Supporting;
 			sourceTree = "<group>";
 		};
-		EBF9B476EBC9E13A028DA01B /* Pods */ = {
+		E8AC2C3A94FD02B3A691177C /* courtside */ = {
 			isa = PBXGroup;
 			children = (
-				1FCE1A4CED63F8950E06D06D /* Pods-courtside.debug.xcconfig */,
-				2C73926EC9216BD2840C65EA /* Pods-courtside.release.xcconfig */,
+				215890C868DBF003A4E74E26 /* ExpoModulesProvider.swift */,
 			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		EE6EE6C0C84AA90A3E8500C2 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				5F08C7B308475DE839627850 /* courtside */,
-			);
-			name = ExpoModulesProviders;
+			name = courtside;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "courtside" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				CB8ECC3A0AE856874ED66828 /* [Expo] Configure project */,
+				277E5BC9E8C32358E4B7B401 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				722E2EDE67779C388C1A4652 /* [CP] Embed Pods Frameworks */,
+				A428DAC46ED2611218F71AEF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -195,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				971624551265EA8CCB4B1A34 /* PrivacyInfo.xcprivacy in Resources */,
+				3FD21F53A6F314C325DD950A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,23 +240,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		722E2EDE67779C388C1A4652 /* [CP] Embed Pods Frameworks */ = {
+		277E5BC9E8C32358E4B7B401 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-courtside/Pods-courtside-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-courtside/Pods-courtside-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-courtside/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -299,24 +301,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-courtside/Pods-courtside-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CB8ECC3A0AE856874ED66828 /* [Expo] Configure project */ = {
+		A428DAC46ED2611218F71AEF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-courtside/Pods-courtside-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-courtside/expo-configure-project.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-courtside/Pods-courtside-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -326,7 +327,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				F9DDC83063999A6B12CCBAFB /* ExpoModulesProvider.swift in Sources */,
+				97142B95CD92BFDEA1CD8C84 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,13 +336,12 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1FCE1A4CED63F8950E06D06D /* Pods-courtside.debug.xcconfig */;
+			baseConfigurationReference = D0AE8A652D4918E10C66DE2D /* Pods-courtside.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = courtside/courtside.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U29T33KG74;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -372,13 +372,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C73926EC9216BD2840C65EA /* Pods-courtside.release.xcconfig */;
+			baseConfigurationReference = 65491829932521E35E403E4D /* Pods-courtside.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = courtside/courtside.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U29T33KG74;
 				INFOPLIST_FILE = courtside/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -456,7 +455,10 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -511,7 +513,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

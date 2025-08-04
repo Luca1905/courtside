@@ -44,6 +44,12 @@ export default function TabLayout() {
           title: "Players",
         }}
       />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: "Map",
+        }}
+      />
     </Tabs>
   );
 }
