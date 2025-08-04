@@ -35,6 +35,7 @@ import {
 } from "~/components/ui/select";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Doc } from "~/convex/_generated/dataModel";
+import { Input } from "~/components/ui/input";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
@@ -46,6 +47,7 @@ const formSchema = z.object({
   endTime: z.date(),
   type: z.enum(MATCH_TYPES),
   surface: z.enum(SURFACES),
+  venue: z.string().min(1, "Enter a venue"),
   sets: z
     .array(
       z.object({
@@ -89,6 +91,7 @@ export default function AddMatchPage() {
       endTime: new Date(),
       type: MATCH_TYPES[0],
       surface: SURFACES[0],
+      venue: "",
       sets: [
         {
           home: 0,
@@ -143,7 +146,6 @@ export default function AddMatchPage() {
 
   const formatTime = (date: Date) =>
     date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const formatDate = (date: Date) => date.toLocaleDateString();
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -239,33 +241,63 @@ export default function AddMatchPage() {
             <Text className="text-xl font-bold">Match Details</Text>
           </View>
 
-          <View className="mb-6">
-            <Label className="font-semibold mb-2 flex-row items-center gap-1">
-              <Calendar size={16} className="text-muted-foreground" />
-              Date
-            </Label>
-            <Controller
-              control={control}
-              name="date"
-              render={({ field }) => (
-                <Pressable
-                  onPress={() => setShowDatePicker(true)}
-                  className="bg-muted/50 p-4 rounded-lg flex-row items-center"
-                >
-                  <Text className="flex-1">{formatDate(field.value)}</Text>
-                  <MaterialCommunityIcons
-                    name="calendar"
-                    size={20}
-                    color="#64748b"
-                  />
-                </Pressable>
+          <View className="flex-row gap-4 mb-6">
+            {/* DATE */}
+            <View className="flex-1">
+              <Label className="font-semibold mb-2 flex-row items-center gap-1">
+                <Calendar size={16} className="text-muted-foreground" />
+                Date
+              </Label>
+              <Controller
+                control={control}
+                name="date"
+                render={({ field }) => (
+                  <Pressable
+                    onPress={() => setShowDatePicker(true)}
+                    className="bg-muted/50 p-4 rounded-lg flex-row items-center"
+                  >
+                    <Text className="flex-1">
+                      {field.value.toLocaleDateString()}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="calendar"
+                      size={20}
+                      color="#64748b"
+                    />
+                  </Pressable>
+                )}
+              />
+              {errors.date && (
+                <Text className="text-destructive text-sm mt-1">
+                  {errors.date.message}
+                </Text>
               )}
-            />
-            {errors.date && (
-              <Text className="text-destructive text-sm mt-1">
-                {errors.date.message}
-              </Text>
-            )}
+            </View>
+
+            {/* VENUE */}
+            <View className="flex-1">
+              <Label id="venueLabel" className="font-semibold mb-2">
+                Venue
+              </Label>
+              <Controller
+                control={control}
+                name="venue"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    placeholder="Enter venue"
+                    value={value}
+                    onChangeText={onChange}
+                    aria-labelledby="venueLabel"
+                    aria-errormessage="venueError"
+                  />
+                )}
+              />
+              {errors.venue && (
+                <Text id="venueError" className="text-destructive text-sm mt-1">
+                  {errors.venue.message}
+                </Text>
+              )}
+            </View>
           </View>
 
           <View className="flex-row gap-4 mb-6">
@@ -418,7 +450,7 @@ export default function AddMatchPage() {
         <Button
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="mt-8 rounded-full shadow-md"
+          className="mt-8 rounded-full shadow-md bg-green-600"
         >
           <Text className="text-primary-foreground font-bold">
             {isSubmitting ? "Adding…" : "Add Match"}
