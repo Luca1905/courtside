@@ -9,6 +9,8 @@ function getIconNameByRoute(route: string) {
       return "history";
     case "players":
       return "account-group";
+    case "map":
+      return "map";
     default:
       return "progress-question";
   }
