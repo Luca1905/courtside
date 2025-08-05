@@ -93,7 +93,11 @@ function useDuration(start: Date, end: Date) {
 
 export default function AddMatchPage() {
   const { bottom } = useSafeAreaInsets();
-  const { location, error: locationError } = useCurrentLocation();
+  const {
+    isLoading: isLoadingLocation,
+    location,
+    error: locationError,
+  } = useCurrentLocation();
   if (locationError) console.log(locationError);
 
   const {
@@ -124,19 +128,6 @@ export default function AddMatchPage() {
       ],
     },
   });
-
-  // When device location arrives, update form’s venue.coordinates
-  useEffect(() => {
-    if (!location) return;
-    setValue(
-      "venue.coordinates",
-      {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      },
-      { shouldValidate: true }
-    );
-  }, [location, setValue]);
 
   const addMatch = useMutation(api.matches.addMatch);
   const opponents = useQuery(api.players.getAll);
@@ -366,41 +357,46 @@ export default function AddMatchPage() {
                 >
                   {/* Full-screen map */}
                   <View style={StyleSheet.absoluteFill}>
-                    <AppleMaps.View
-                      style={{ flex: 1 }}
-                      cameraPosition={{
-                        coordinates: venueCoords,
-                        zoom: 15,
-                      }}
-                      onCameraMove={({ coordinates }) => {
-                        if (
-                          typeof coordinates.latitude !== "number" ||
-                          typeof coordinates.longitude !== "number"
-                        ) {
-                          console.error("Invalid map coordinates");
-                          return;
-                        }
-                        onChange({
-                          name: venueName,
-                          coordinates: {
-                            latitude: coordinates.latitude,
-                            longitude: coordinates.longitude,
-                          },
-                        });
-                      }}
-                      properties={{
-                        isMyLocationEnabled: true,
-                        isTrafficEnabled: false,
-                        selectionEnabled: true,
-                        mapType: AppleMapsMapType.HYBRID,
-                      }}
-                      uiSettings={{
-                        scaleBarEnabled: true,
-                        myLocationButtonEnabled: true,
-                        compassEnabled: true,
-                        togglePitchEnabled: false,
-                      }}
-                    />
+                    {isLoadingLocation ? (
+                      <Text>Loading...</Text>
+                    ) : (
+                      <AppleMaps.View
+                        style={{ flex: 1 }}
+                        cameraPosition={{
+                          coordinates:
+                            location?.coords || DEFAULT_LOCATION_COORDS,
+                          zoom: 15,
+                        }}
+                        onCameraMove={({ coordinates }) => {
+                          if (
+                            typeof coordinates.latitude !== "number" ||
+                            typeof coordinates.longitude !== "number"
+                          ) {
+                            console.error("Invalid map coordinates");
+                            return;
+                          }
+                          onChange({
+                            name: venueName,
+                            coordinates: {
+                              latitude: coordinates.latitude,
+                              longitude: coordinates.longitude,
+                            },
+                          });
+                        }}
+                        properties={{
+                          isMyLocationEnabled: true,
+                          isTrafficEnabled: false,
+                          selectionEnabled: true,
+                          mapType: AppleMapsMapType.HYBRID,
+                        }}
+                        uiSettings={{
+                          scaleBarEnabled: true,
+                          myLocationButtonEnabled: true,
+                          compassEnabled: true,
+                          togglePitchEnabled: false,
+                        }}
+                      />
+                    )}
                   </View>
 
                   {/* Floating pin */}
@@ -417,7 +413,10 @@ export default function AddMatchPage() {
                   </View>
 
                   {/* Bottom sheet */}
-                  <View className="absolute bottom-0 left-0 right-0 p-4 bg-white/50">
+                  <View
+                    className="absolute bottom-0 left-0 right-0 p-4 bg-white/50"
+                    pointerEvents="auto"
+                  >
                     <SafeAreaView>
                       <Input
                         placeholder="Venue name"

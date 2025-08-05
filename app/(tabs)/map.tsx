@@ -1,6 +1,7 @@
 import { AppleMaps } from "expo-maps";
 import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
 import { Platform, StyleSheet, Text, View } from "react-native";
+import { DEFAULT_LOCATION_COORDS } from "~/constants/location";
 import { useCurrentLocation } from "~/hooks/useCurrentLocation";
 
 export default function Map() {
@@ -18,7 +19,10 @@ export default function Map() {
         <>
           <AppleMaps.View
             style={StyleSheet.absoluteFill}
-            cameraPosition={{ coordinates: location?.coords, zoom: 15 }}
+            cameraPosition={{
+              coordinates: location?.coords || DEFAULT_LOCATION_COORDS,
+              zoom: 15,
+            }}
             onCameraMove={({ coordinates }) => {
               console.log(coordinates);
             }}

@@ -14,7 +14,7 @@ import * as React from "react";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
-
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -60,7 +60,15 @@ export default function RootLayout() {
             screenOptions={{
               headerTitle: "",
               headerBackTitle: "Back",
-              headerRight: () => <Link href="/match/add">Add</Link>,
+              headerRight: () => (
+                <Link href="/match/add">
+                  <MaterialCommunityIcons
+                    name="plus-box-multiple"
+                    size={24}
+                    color={isDarkColorScheme ? "white" : "black"}
+                  />
+                </Link>
+              ),
             }}
           >
             <Stack.Screen
