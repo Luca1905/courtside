@@ -1,29 +1,30 @@
-import React, { useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useQuery } from "convex/react";
-import { SafeAreaView, View, ScrollView, Pressable } from "react-native";
-import { Card } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Pressable, SafeAreaView, ScrollView, View } from "react-native";
+import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 import { Badge } from "~/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
+import { Card } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Text } from "~/components/ui/text";
 import { api } from "~/convex/_generated/api";
 import type { Id } from "~/convex/_generated/dataModel";
-import { cn } from "~/lib/utils";
 import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
+import { CloudRain } from "~/lib/icons/CloudRain";
+import { Droplets } from "~/lib/icons/Droplets";
 import { MapPin } from "~/lib/icons/MapPin";
 import { Thermometer } from "~/lib/icons/Thermometer";
 import { Wind } from "~/lib/icons/Wind";
-import { CloudRain } from "~/lib/icons/CloudRain";
-import { Droplets } from "~/lib/icons/Droplets";
 import {
   calculateMatchDuration,
   formatDate,
   formatDuration,
+  formatMatchScore,
   formatTime,
 } from "~/lib/match";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
+import { cn } from "~/lib/utils";
 
 export default function MatchScreen() {
   const router = useRouter();
@@ -52,6 +53,8 @@ export default function MatchScreen() {
     );
   }
 
+  const won = match.winner === match.playerTeam;
+
   return (
     <>
       <Stack.Screen options={{ headerLargeTitle: true }} />
@@ -67,7 +70,7 @@ export default function MatchScreen() {
               <View
                 className={cn(
                   "absolute top-0 left-0 right-0 h-1.5 rounded-t-lg",
-                  match.won ? "bg-green-500" : "bg-red-500"
+                  won ? "bg-green-500" : "bg-red-500"
                 )}
               />
               <View className="flex-row justify-between items-center">
@@ -75,20 +78,18 @@ export default function MatchScreen() {
                   <Text
                     className={cn(
                       "text-3xl font-black",
-                      match.won ? "text-green-700" : "text-red-700"
+                      won ? "text-green-700" : "text-red-700"
                     )}
                   >
-                    {match.sets
-                      .map((set) => `${set.home}-${set.guest}`)
-                      .join(" ")}
+                    {formatMatchScore(match.sets, match.playerTeam)}
                   </Text>
                   <Text
                     className={cn(
                       "text-sm font-semibold mt-1",
-                      match.won ? "text-green-600" : "text-red-600"
+                      won ? "text-green-600" : "text-red-600"
                     )}
                   >
-                    {match.won ? "Victory" : "Defeat"}
+                    {won ? "Victory" : "Defeat"}
                   </Text>
                 </View>
                 <Badge

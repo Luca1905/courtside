@@ -9,7 +9,7 @@ import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Thermometer } from "~/lib/icons/Thermometer";
-import { calculateMatchDuration } from "~/lib/match";
+import { calculateMatchDuration, formatMatchScore } from "~/lib/match";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
 
@@ -30,6 +30,7 @@ const formatDuration = (min: number) =>
 export function MatchCard({ match }: MatchCardProps) {
   const router = useRouter();
 
+  const won = match.winner === match.playerTeam;
   return (
     <Pressable
       onPress={() => router.navigate(`/match/${match._id}`)}
@@ -40,7 +41,7 @@ export function MatchCard({ match }: MatchCardProps) {
         <View
           className={cn(
             "absolute top-0 left-0 right-0 h-1.5",
-            match.won ? "bg-green-500" : "bg-red-500"
+            won ? "bg-green-500" : "bg-red-500"
           )}
         />
 
@@ -127,20 +128,18 @@ export function MatchCard({ match }: MatchCardProps) {
                 <Text
                   className={cn(
                     "text-3xl font-black",
-                    match.won ? "text-green-700" : "text-red-700"
+                    won ? "text-green-700" : "text-red-700"
                   )}
                 >
-                  {match.sets
-                    .map((set) => `${set.home}-${set.guest}`)
-                    .join(" ")}
+                  {formatMatchScore(match.sets, match.playerTeam)}
                 </Text>
                 <Text
                   className={cn(
                     "text-sm font-semibold mt-1",
-                    match.won ? "text-green-600" : "text-red-600"
+                    won ? "text-green-600" : "text-red-600"
                   )}
                 >
-                  {match.won ? "Victory" : "Defeat"}
+                  {won ? "Victory" : "Defeat"}
                 </Text>
               </View>
             </View>

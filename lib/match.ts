@@ -11,7 +11,9 @@ export const calculateMatchDuration = (
 
 export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
   const totalMatches = matches.length;
-  const wins = matches.filter((match) => match.won).length;
+  const wins = matches.filter(
+    (match) => match.winner === match.playerTeam
+  ).length;
   const losses = totalMatches - wins;
   const winPercentage =
     totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
@@ -34,7 +36,7 @@ export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
       surfaceStats[match.surface] = { matches: 0, wins: 0, winPercentage: 0 };
     }
     surfaceStats[match.surface].matches++;
-    if (match.won) {
+    if (match.winner === match.playerTeam) {
       surfaceStats[match.surface].wins++;
     }
   });
@@ -87,7 +89,9 @@ export const getHeadToHeadRecord = (
   const h2hMatches = matches.filter(
     (match) => match.opponent.name === opponentName
   );
-  const wins = h2hMatches.filter((match) => match.won).length;
+  const wins = h2hMatches.filter(
+    (match) => match.winner === match.playerTeam
+  ).length;
   const losses = h2hMatches.length - wins;
   return { wins, losses };
 };
@@ -141,3 +145,18 @@ export const filterMatches = (
     return true;
   });
 };
+
+export function formatMatchScore(
+  sets: { home: number; guest: number }[],
+  playerTeam: string
+): string {
+  return sets
+    .filter((set) => !(set.home === 0 && set.guest === 0))
+    .map((set) => {
+      // Always show user's score first
+      const userScore = playerTeam === "Home" ? set.home : set.guest;
+      const opponentScore = playerTeam === "Home" ? set.guest : set.home;
+      return `${userScore}-${opponentScore}`;
+    })
+    .join(" ");
+}
