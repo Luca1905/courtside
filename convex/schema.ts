@@ -69,11 +69,20 @@ const StatsSchema = v.object({
   }),
 });
 
+function enumLiteral(literals: string[]) {
+  return v.union(
+    ...literals.map((l) => {
+      return v.literal(l);
+    })
+  );
+}
+
 export default defineSchema({
   matches: defineTable({
-    date: v.string(),
-    type: v.union(v.literal("Singles"), v.literal("Doubles")),
     opponentId: v.id("players"),
+    type: enumLiteral(["Singles", "Doubles"]),
+
+    surface: enumLiteral(["Hard", "Clay", "Grass"]),
     venue: v.object({
       name: v.string(),
       coordinates: v.object({
@@ -81,17 +90,22 @@ export default defineSchema({
         longitude: v.number(),
       }),
     }),
-    surface: v.union(v.literal("Clay"), v.literal("Hard"), v.literal("Grass")),
+
+    date: v.string(),
     startTime: v.number(),
     endTime: v.number(),
+
     sets: v.array(v.object({ guest: v.number(), home: v.number() })),
-    won: v.union(v.literal("guest"), v.literal("home")),
+    winner: enumLiteral(["Home", "Guest"]),
+    playerTeam: enumLiteral(["Home", "Guest"]),
+
     weather: v.object({
       temperature: v.number(),
       windSpeed: v.number(),
       precipitation: v.number(),
       humidity: v.number(),
     }),
+
     stats: v.optional(
       v.object({
         player: StatsSchema,
@@ -106,10 +120,8 @@ export default defineSchema({
     name: v.string(),
     club: v.optional(v.string()),
     ranking: v.optional(v.number()),
-    hittingArm: v.optional(v.union(v.literal("Right"), v.literal("Left"))),
-    backhandGrip: v.optional(
-      v.union(v.literal("Two-Handed"), v.literal("One-Handed"))
-    ),
+    hittingArm: v.optional(enumLiteral(["Left", "Right"])),
+    backhandGrip: v.optional(enumLiteral(["One-Handed", "Two-Handed"])),
     playingSince: v.optional(v.number()),
     birthYear: v.optional(v.number()),
   }),

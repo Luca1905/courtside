@@ -46,6 +46,7 @@ import { validateMatchScore } from "~/lib/validator";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
+const TEAMS = ["Home", "Guest"] as const;
 
 const formSchema = z.object({
   opponentId: z.string().min(1, "Pick an opponent"),
@@ -54,6 +55,7 @@ const formSchema = z.object({
   endTime: z.date(),
   type: z.enum(MATCH_TYPES),
   surface: z.enum(SURFACES),
+  playerTeam: z.enum(TEAMS),
   venue: z.object({
     name: z.string().min(1, "Enter a venue name"),
     coordinates: z
@@ -110,6 +112,7 @@ export default function AddMatchPage() {
       endTime: new Date(),
       type: MATCH_TYPES[0],
       surface: SURFACES[0],
+      playerTeam: TEAMS[0],
       venue: {
         name: "",
         coordinates: DEFAULT_LOCATION_COORDS,
@@ -191,7 +194,7 @@ export default function AddMatchPage() {
         opponentId: data.opponentId as Id<"players">,
         startTime: data.startTime.getTime(),
         endTime: data.endTime.getTime(),
-        won: winner,
+        winner,
         // TODO: add weather api
         weather: {
           temperature: 20,
@@ -513,7 +516,7 @@ export default function AddMatchPage() {
             </Text>
           </View>
 
-          {/* Match Type & Surface */}
+          {/* Match Type & Surface & Playerside */}
           <View className="gap-6">
             {/* Type */}
             <View>
@@ -591,6 +594,52 @@ export default function AddMatchPage() {
               {errors.surface && (
                 <Text className="text-destructive text-sm mt-2">
                   {errors.surface.message}
+                </Text>
+              )}
+            </View>
+
+            {/* Side */}
+            <View>
+              <Label className="font-semibold mb-2">You played as</Label>
+              <Controller
+                control={control}
+                name="playerTeam"
+                render={({ field: { value, onChange } }) => (
+                  <Select
+                    defaultValue={{
+                      value,
+                      label: value.charAt(0).toUpperCase() + value.slice(1),
+                    }}
+                    onValueChange={(v) => {
+                      onChange(v?.value);
+                      trigger("playerTeam");
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        className="text-foreground text-sm native:text-lg"
+                        placeholder="Select side"
+                      />
+                    </SelectTrigger>
+                    <SelectContent insets={contentInsets}>
+                      <SelectGroup>
+                        <SelectLabel>Your Side</SelectLabel>
+                        {TEAMS.map((s) => {
+                          const label = s.charAt(0).toUpperCase() + s.slice(1);
+                          return (
+                            <SelectItem key={s} value={s} label={label}>
+                              {label}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.playerTeam && (
+                <Text className="text-destructive text-sm mt-2">
+                  {errors.playerTeam.message}
                 </Text>
               )}
             </View>
