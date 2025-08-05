@@ -30,7 +30,7 @@ export const getResultForPlayer = query({
       .filter((q) => q.eq(q.field("opponentId"), playerId))
       .collect();
     const results = playedMatches.reduce(
-      (acc, { score: { won } }) => {
+      (acc, { won }) => {
         if (won) acc.wins++;
         else acc.losses++;
         return acc;

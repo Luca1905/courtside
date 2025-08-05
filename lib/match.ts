@@ -1,14 +1,26 @@
 import type { Doc } from "~/convex/_generated/dataModel";
 import type { MatchWithOpponentRecord } from "~/convex/matches";
 
+export const calculateMatchDuration = (
+  startTime: number,
+  endTime: number
+): number => {
+  const durationMs = endTime - startTime;
+  return Math.round(durationMs / 60000);
+};
+
 export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
   const totalMatches = matches.length;
-  const wins = matches.filter((match) => match.score.won).length;
+  const wins = matches.filter((match) => match.won).length;
   const losses = totalMatches - wins;
   const winPercentage =
     totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
 
-  const totalDuration = matches.reduce((sum, match) => sum + match.duration, 0);
+  const totalDuration = matches.reduce(
+    (sum, match) =>
+      sum + calculateMatchDuration(match.startTime, match.endTime),
+    0
+  );
   const averageMatchDuration =
     totalMatches > 0 ? Math.round(totalDuration / totalMatches) : 0;
 
@@ -22,7 +34,7 @@ export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
       surfaceStats[match.surface] = { matches: 0, wins: 0, winPercentage: 0 };
     }
     surfaceStats[match.surface].matches++;
-    if (match.score.won) {
+    if (match.won) {
       surfaceStats[match.surface].wins++;
     }
   });
@@ -59,8 +71,8 @@ export const formatDate = (dateString: string): string => {
   });
 };
 
-export const formatTime = (dateString: string): string => {
-  const date = new Date(dateString);
+export const formatTime = (dateInput: string | number): string => {
+  const date = new Date(dateInput);
   return date.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
@@ -75,7 +87,7 @@ export const getHeadToHeadRecord = (
   const h2hMatches = matches.filter(
     (match) => match.opponent.name === opponentName
   );
-  const wins = h2hMatches.filter((match) => match.score.won).length;
+  const wins = h2hMatches.filter((match) => match.won).length;
   const losses = h2hMatches.length - wins;
   return { wins, losses };
 };

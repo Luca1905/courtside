@@ -1,105 +1,90 @@
-export interface ValidationResult {
+type SetScore = { guest: number; home: number };
+
+type MatchResult = {
   valid: boolean;
-  errors: string[];
+  winner: "guest" | "home" | null;
+};
+
+/**
+ * Normal set:
+ * – Winner 6 points and loser ≤ 4, or
+ * – Winner 7 points and loser 6
+ */
+function isNormalSet(a: number, b: number): boolean {
+  const w = Math.max(a, b);
+  const l = Math.min(a, b);
+  return (w === 6 && l <= 4) || (w === 7 && l === 6);
 }
 
 /**
- * Convert "7-6(10-8)" => { g1: 7, g2: 6, tb1: 10, tb2: 8 }
+ * Match tiebreak:
+ * – Winner ≥ 10 points
+ * – Win by ≥ 2 points
  */
-function parseSet(str: string) {
-  const RE = /^(?<g1>\d+)-(?<g2>\d+)(?:\((?<tb1>\d+)-(?<tb2>\d+)\))?$/;
-
-  const m = str.match(RE);
-  if (!m?.groups) throw new Error(`Malformed set "${str}"`);
-
-  const i = (x?: string) => (x === undefined ? undefined : +x);
-  return {
-    g1: +m.groups.g1,
-    g2: +m.groups.g2,
-    tb1: i(m.groups.tb1),
-    tb2: i(m.groups.tb2),
-  };
+function isMatchTiebreak(a: number, b: number): boolean {
+  const w = Math.max(a, b);
+  const l = Math.min(a, b);
+  return w >= 10 && w - l >= 2;
 }
 
-function validateSet(
-  s: ReturnType<typeof parseSet>
-): string | null /* error msg */ {
-  const inRange = (v: number) => Number.isInteger(v) && v >= 0 && v <= 7;
-  if (!inRange(s.g1) || !inRange(s.g2)) return "games must be integers 0-7";
-  if (s.g1 === s.g2) return "set cannot end in a draw";
+function isEmptySet(a: number, b: number): boolean {
+  return a === 0 && b === 0;
+}
 
-  const max = Math.max(s.g1, s.g2);
-  const diff = Math.abs(s.g1 - s.g2);
-  const ok =
-    (max === 6 && diff >= 2) || //
-    (max === 7 && (diff === 2 || diff === 1));
-  if (!ok) return "invalid game score";
-
-  const tbNeeded = max === 7 && diff === 1;
-  if (tbNeeded) {
-    if (s.tb1 === undefined || s.tb2 === undefined)
-      return "tiebreak missing for 7-6";
-    const tbMax = Math.max(s.tb1, s.tb2);
-    const tbDiff = Math.abs(s.tb1 - s.tb2);
-    if (tbMax < 7 || tbDiff < 2) return "tiebreak must reach ≥7 and lead by 2";
-  } else if (s.tb1 !== undefined || s.tb2 !== undefined) {
-    return "tiebreak supplied for non-tiebreak set";
+/**
+ * Validate a best-of-3 match:
+ * – Sets 1 and 2 normal
+ * – If after two sets one side leads 2–0, set 3 must not be played
+ * – If 1–1, set 3 must be either normal or a match tiebreak
+ * – One side must win majority of sets
+ */
+export function validateMatchScore(sets: SetScore[]): MatchResult {
+  if (sets.length !== 3) {
+    return { valid: false, winner: null };
   }
-  return null;
-}
 
-export function validateMatch(bestOf: 3 | 5, sets: string[]): ValidationResult {
-  const errors: string[] = [];
+  let guestWins = 0;
+  let homeWins = 0;
 
-  if (sets.length === 0) errors.push("no sets given");
-  if (sets.length > bestOf)
-    errors.push(`best-of-${bestOf} cannot contain ${sets.length} sets`);
-
-  let p1 = 0,
-    p2 = 0,
-    decidedAt: number | null = null;
-
-  sets.forEach((str, i) => {
-    let parsed;
-    try {
-      parsed = parseSet(str);
-    } catch (e) {
-      errors.push(`set ${i + 1}: ${(e as Error).message}`);
-      return;
+  // Validate first two sets as normal
+  for (let i = 0; i < 2; i++) {
+    const { guest, home } = sets[i];
+    if (!isNormalSet(guest, home)) {
+      return { valid: false, winner: null };
     }
-    const msg = validateSet(parsed);
-    if (msg) {
-      errors.push(`set ${i + 1}: ${msg}`);
-      return;
+    if (guest > home) guestWins++;
+    else homeWins++;
+  }
+
+  // case: someone already won 2–0, set 3 must be empty
+  if (guestWins === 2 || homeWins === 2) {
+    const { guest, home } = sets[2];
+    if (!isEmptySet(guest, home)) {
+      return { valid: false, winner: null };
     }
-    if (parsed.g1 > parsed.g2) {
-      p1++;
-    } else {
-      p2++;
-    }
+    return {
+      valid: true,
+      winner: guestWins > homeWins ? "guest" : "home",
+    };
+  }
 
-    const need = bestOf === 3 ? 2 : 3;
-    if (decidedAt === null && (p1 === need || p2 === need)) decidedAt = i;
-  });
+  // case: tied 1–1, set3 must be played
+  // validate set 3
+  const { guest, home } = sets[2];
+  const thirdIsNormal = isNormalSet(guest, home);
+  const thirdIsTiebreak = isMatchTiebreak(guest, home);
+  if (!thirdIsNormal && !thirdIsTiebreak) {
+    return { valid: false, winner: null };
+  }
+  if (guest > home) guestWins++;
+  else homeWins++;
 
-  const need = bestOf === 3 ? 2 : 3;
-  if (p1 < need && p2 < need) errors.push("match unfinished");
-  if (decidedAt !== null && decidedAt !== sets.length - 1)
-    errors.push(`extra sets after match decided at set ${decidedAt + 1}`);
-
-  return { valid: errors.length === 0, errors };
-}
-
-export function getWinner(sets: string[]): 1 | 2 | null {
-  const need = sets.length > 3 ? 3 : 2;
-  let p1 = 0,
-    p2 = 0;
-  sets.forEach((s) => {
-    const [a, b] = s.split("-").map(Number);
-    if (a > b) p1++;
-    else if (b > a) p2++;
-  });
-  if (p1 >= need) return 1;
-  if (p2 >= need) return 2;
-  return null;
+  // checK: one side has more sets
+  if (guestWins === homeWins) {
+    return { valid: false, winner: null };
+  }
+  return {
+    valid: true,
+    winner: guestWins > homeWins ? "guest" : "home",
+  };
 }

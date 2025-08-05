@@ -1,30 +1,29 @@
-import { useState, useEffect } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "convex/react";
+import { AppleMaps } from "expo-maps";
+import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
-  ScrollView,
-  View,
   Alert,
+  Dimensions,
   Modal,
   Pressable,
-  Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
+  View,
 } from "react-native";
-import { Text } from "~/components/ui/text";
-import { Card } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Calendar } from "~/lib/icons/Calendar";
-import { Clock } from "~/lib/icons/Clock";
-import { User } from "~/lib/icons/User";
-import { z } from "zod";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import DatePicker from "react-native-date-picker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { z } from "zod";
 import { ResultBoard } from "~/components/ResultBoard";
-import { useQuery } from "convex/react";
-import { api } from "~/convex/_generated/api";
-import { router } from "expo-router";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -34,13 +33,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Doc } from "~/convex/_generated/dataModel";
-import { AppleMaps } from "expo-maps";
-import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
-import { useCurrentLocation } from "~/hooks/useCurrentLocation";
+import { Text } from "~/components/ui/text";
 import { DEFAULT_LOCATION_COORDS } from "~/constants/location";
-import { Input } from "~/components/ui/input";
+import { api } from "~/convex/_generated/api";
+import { Doc, Id } from "~/convex/_generated/dataModel";
+import { useCurrentLocation } from "~/hooks/useCurrentLocation";
+import { Calendar } from "~/lib/icons/Calendar";
+import { Clock } from "~/lib/icons/Clock";
+import { User } from "~/lib/icons/User";
+import { calculateMatchDuration, formatDuration } from "~/lib/match";
+import { validateMatchScore } from "~/lib/validator";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
@@ -81,10 +83,8 @@ function useDuration(start: Date, end: Date) {
       setLabel("Invalid");
       return;
     }
-    const min = Math.round((end.getTime() - start.getTime()) / 60000);
-    const h = Math.floor(min / 60);
-    const m = min % 60;
-    setLabel(h && m ? `${h}h ${m}m` : h ? `${h}h` : `${m}m`);
+    const minutes = calculateMatchDuration(start.getTime(), end.getTime());
+    setLabel(formatDuration(minutes));
   }, [start, end]);
   return label;
 }
@@ -92,22 +92,21 @@ function useDuration(start: Date, end: Date) {
 export default function AddMatchPage() {
   const { bottom } = useSafeAreaInsets();
   const { location, error: locationError } = useCurrentLocation();
-
-  locationError && console.log(locationError);
+  if (locationError) console.log(locationError);
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
     watch,
     setValue,
     trigger,
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       opponentId: "",
       date: new Date(),
-      startTime: new Date(Date.now() - 120 * 60000), //2 hours
+      startTime: new Date(Date.now() - 120 * 60000),
       endTime: new Date(),
       type: MATCH_TYPES[0],
       surface: SURFACES[0],
@@ -116,51 +115,42 @@ export default function AddMatchPage() {
         coordinates: DEFAULT_LOCATION_COORDS,
       },
       sets: [
-        {
-          home: 0,
-          guest: 0,
-        },
-        {
-          home: 0,
-          guest: 0,
-        },
-        {
-          home: 0,
-          guest: 0,
-        },
+        { home: 0, guest: 0 },
+        { home: 0, guest: 0 },
+        { home: 0, guest: 0 },
       ],
     },
   });
 
-  const opponents = useQuery(api.players.getAll);
+  // When device location arrives, update form’s venue.coordinates
+  useEffect(() => {
+    if (!location) return;
+    setValue(
+      "venue.coordinates",
+      {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      },
+      { shouldValidate: true }
+    );
+  }, [location, setValue]);
 
+  const addMatch = useMutation(api.matches.addMatch);
+  const opponents = useQuery(api.players.getAll);
+  const watched = watch();
+  const selectedOpponent = opponents?.find((o) => o._id === watched.opponentId);
+  const durationLabel = useDuration(watched.startTime, watched.endTime);
+
+  // UI state for modals / pickers
   const [showOpponentPicker, setShowOpponentPicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
 
-  const [tempName, setTempName] = useState(""); // text field inside modal
-  const [tempLoc, setTempLoc] = useState<{
-    latitude: number;
-    longitude: number;
-  }>(DEFAULT_LOCATION_COORDS);
-
-  useEffect(() => {
-    if (location === null) return;
-
-    setValue("venue.coordinates", location.coords, { shouldValidate: true });
-    setTempLoc(location.coords);
-  }, [location, setValue]);
-
-  const watchedValues = watch();
-  const selectedOpponent = opponents?.find(
-    (o) => o._id === watchedValues.opponentId
-  );
-  const durationLabel = useDuration(
-    watchedValues.startTime,
-    watchedValues.endTime
-  );
+  // Pull live venue form-state into local variables
+  const venue = useWatch({ control, name: "venue" });
+  const { name: venueName, coordinates: venueCoords } = venue;
 
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -175,25 +165,48 @@ export default function AddMatchPage() {
     screenHeight - (insets.top + insets.bottom) - 100
   );
 
-  const handleSelectOpponent = (opponent: Doc<"players">) => {
-    setValue("opponentId", opponent._id);
+  const handleSelectOpponent = (o: Doc<"players">) => {
+    setValue("opponentId", o._id);
     setShowOpponentPicker(false);
     trigger("opponentId");
   };
 
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formatTime = (d: Date) =>
+    d.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const onSubmit = async (data: FormData) => {
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-      console.log("Form data:", data);
-      Alert.alert("Success", "Match added successfully!", [
+      const { valid, winner } = validateMatchScore(data.sets);
+      if (!valid || !winner) {
+        Alert.alert("Failed", "Match is not complete");
+        return;
+      }
+
+      addMatch({
+        ...data,
+        date: data.date.toISOString(),
+        opponentId: data.opponentId as Id<"players">,
+        startTime: data.startTime.getTime(),
+        endTime: data.endTime.getTime(),
+        won: winner,
+        // TODO: add weather api
+        weather: {
+          temperature: 20,
+          windSpeed: 10,
+          precipitation: 0,
+          humidity: 50,
+        },
+      });
+
+      Alert.alert("Success", "Match added!", [
         { text: "OK", onPress: () => router.back() },
       ]);
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Failed to add match. Please try again.");
+    } catch (e) {
+      console.error(e);
+      Alert.alert("Error", "Could not add match");
     }
   };
 
@@ -226,6 +239,7 @@ export default function AddMatchPage() {
           )}
         </View>
 
+        {/* Opponent Picker */}
         <Card className="p-6 rounded-2xl shadow-sm mt-6">
           <View className="flex-row items-center gap-3 mb-4">
             <User size={24} className="text-foreground" />
@@ -272,14 +286,15 @@ export default function AddMatchPage() {
           )}
         </Card>
 
+        {/* Match Details */}
         <Card className="p-6 rounded-2xl shadow-sm mt-6">
           <View className="flex-row items-center gap-3 mb-4">
             <Clock size={24} className="text-foreground" />
             <Text className="text-xl font-bold">Match Details</Text>
           </View>
 
+          {/* Date */}
           <View className="flex-row gap-4 mb-6">
-            {/* DATE */}
             <View className="flex-1">
               <Label className="font-semibold mb-2 flex-row items-center gap-1">
                 <Calendar size={16} className="text-muted-foreground" />
@@ -312,6 +327,7 @@ export default function AddMatchPage() {
             </View>
           </View>
 
+          {/* Venue */}
           <Label className="font-semibold mb-2">Venue</Label>
           <Controller
             control={control}
@@ -319,11 +335,7 @@ export default function AddMatchPage() {
             render={({ field: { value, onChange } }) => (
               <>
                 <Pressable
-                  onPress={() => {
-                    setTempName(value.name);
-                    setTempLoc(value.coordinates);
-                    setShowVenuePicker(true);
-                  }}
+                  onPress={() => setShowVenuePicker(true)}
                   className="p-4 bg-muted/50 rounded-lg mb-6"
                 >
                   {value.name ? (
@@ -344,18 +356,17 @@ export default function AddMatchPage() {
                   </Text>
                 )}
 
-                {/*  Modal with map + bottom sheet */}
                 <Modal
                   visible={showVenuePicker}
                   animationType="slide"
-                  transparent={true}
+                  transparent
                 >
-                  {/* full-screen map */}
+                  {/* Full-screen map */}
                   <View style={StyleSheet.absoluteFill}>
                     <AppleMaps.View
                       style={{ flex: 1 }}
                       cameraPosition={{
-                        coordinates: tempLoc,
+                        coordinates: venueCoords,
                         zoom: 15,
                       }}
                       onCameraMove={({ coordinates }) => {
@@ -363,12 +374,15 @@ export default function AddMatchPage() {
                           typeof coordinates.latitude !== "number" ||
                           typeof coordinates.longitude !== "number"
                         ) {
-                          console.error("Failed getting coordinates");
+                          console.error("Invalid map coordinates");
                           return;
                         }
-                        setTempLoc({
-                          latitude: coordinates.latitude,
-                          longitude: coordinates.longitude,
+                        onChange({
+                          name: venueName,
+                          coordinates: {
+                            latitude: coordinates.latitude,
+                            longitude: coordinates.longitude,
+                          },
                         });
                       }}
                       properties={{
@@ -386,7 +400,7 @@ export default function AddMatchPage() {
                     />
                   </View>
 
-                  {/* floating pin */}
+                  {/* Floating pin */}
                   <View
                     style={StyleSheet.absoluteFill}
                     pointerEvents="none"
@@ -399,16 +413,18 @@ export default function AddMatchPage() {
                     />
                   </View>
 
-                  {/* bottom sheet: absolutely positioned with 50% white bg */}
-                  <View
-                    pointerEvents="box-none"
-                    className="absolute bottom-0 left-0 right-0 p-4 bg-white/50"
-                  >
+                  {/* Bottom sheet */}
+                  <View className="absolute bottom-0 left-0 right-0 p-4 bg-white/50">
                     <SafeAreaView>
                       <Input
                         placeholder="Venue name"
-                        value={tempName}
-                        onChangeText={setTempName}
+                        value={venueName}
+                        onChangeText={(text) =>
+                          onChange({
+                            name: text,
+                            coordinates: venueCoords,
+                          })
+                        }
                       />
                       <View className="flex-row justify-between mt-4">
                         <Button
@@ -419,7 +435,6 @@ export default function AddMatchPage() {
                         </Button>
                         <Button
                           onPress={() => {
-                            onChange({ name: tempName, location: tempLoc });
                             trigger("venue");
                             setShowVenuePicker(false);
                           }}
@@ -437,6 +452,7 @@ export default function AddMatchPage() {
             )}
           />
 
+          {/* Start & End Time */}
           <View className="flex-row gap-4 mb-6">
             <View className="flex-1">
               <Label className="font-semibold mb-2">Start Time</Label>
@@ -490,14 +506,16 @@ export default function AddMatchPage() {
             </View>
           </View>
 
+          {/* Duration */}
           <View className="p-3 bg-muted/50 rounded-lg mb-6">
             <Text className="text-sm text-muted-foreground">
               Duration: {durationLabel}
             </Text>
           </View>
 
-          {/*  Match Type & Surface */}
+          {/* Match Type & Surface */}
           <View className="gap-6">
+            {/* Type */}
             <View>
               <Label className="font-semibold mb-2">Match Type</Label>
               <Controller
@@ -505,10 +523,7 @@ export default function AddMatchPage() {
                 name="type"
                 render={({ field: { value, onChange } }) => (
                   <Select
-                    defaultValue={{
-                      value,
-                      label: value,
-                    }}
+                    defaultValue={{ value, label: value }}
                     onValueChange={(v) => {
                       onChange(v?.value);
                       trigger("type");
@@ -540,6 +555,7 @@ export default function AddMatchPage() {
               )}
             </View>
 
+            {/* Surface */}
             <View>
               <Label className="font-semibold mb-2">Court Surface</Label>
               <Controller
@@ -547,10 +563,7 @@ export default function AddMatchPage() {
                 name="surface"
                 render={({ field: { value, onChange } }) => (
                   <Select
-                    defaultValue={{
-                      value,
-                      label: value,
-                    }}
+                    defaultValue={{ value, label: value }}
                     onValueChange={(v) => {
                       onChange(v?.value);
                       trigger("surface");
@@ -584,6 +597,7 @@ export default function AddMatchPage() {
           </View>
         </Card>
 
+        {/* Submit */}
         <Button
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
@@ -594,23 +608,22 @@ export default function AddMatchPage() {
           </Text>
         </Button>
       </ScrollView>
-      {/* End of page */}
 
-      {/* Modals */}
+      {/* Opponent Modal */}
       <Modal visible={showOpponentPicker} animationType="slide">
         <SafeAreaView className="flex-1 bg-background">
           <View className="p-6">
             <Text className="text-xl font-bold mb-4">Select Opponent</Text>
             <ScrollView>
-              {opponents?.map((opponent) => (
+              {opponents?.map((o) => (
                 <Pressable
-                  key={opponent._id}
-                  onPress={() => handleSelectOpponent(opponent)}
+                  key={o._id}
+                  onPress={() => handleSelectOpponent(o)}
                   className="p-4 mb-3 bg-muted/50 rounded-lg"
                 >
-                  <Text className="font-semibold text-lg">{opponent.name}</Text>
+                  <Text className="font-semibold text-lg">{o.name}</Text>
                   <Text className="text-sm text-muted-foreground">
-                    {opponent.club}
+                    {o.club}
                   </Text>
                 </Pressable>
               ))}
@@ -626,10 +639,11 @@ export default function AddMatchPage() {
         </SafeAreaView>
       </Modal>
 
+      {/* Date & Time Pickers */}
       <DatePicker
         modal
         open={showDatePicker}
-        date={watchedValues.date}
+        date={watched.date}
         mode="date"
         onConfirm={(d) => {
           setValue("date", d);
@@ -641,7 +655,7 @@ export default function AddMatchPage() {
       <DatePicker
         modal
         open={showStartPicker}
-        date={watchedValues.startTime}
+        date={watched.startTime}
         mode="time"
         onConfirm={(t) => {
           setValue("startTime", t);
@@ -653,7 +667,7 @@ export default function AddMatchPage() {
       <DatePicker
         modal
         open={showEndPicker}
-        date={watchedValues.endTime}
+        date={watched.endTime}
         mode="time"
         onConfirm={(t) => {
           setValue("endTime", t);

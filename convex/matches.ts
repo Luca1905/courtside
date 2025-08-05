@@ -1,8 +1,9 @@
+import { WithoutSystemFields } from "convex/server";
 import { v } from "convex/values";
+import type { Prettify } from "../lib/utils";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
-import type { Doc, Id } from "./_generated/dataModel";
-import type { Prettify } from "../lib/utils";
 
 const MATCHES_COLLECTION = "matches";
 const PLAYERS_COLLECTION = "players";
@@ -113,7 +114,7 @@ export const getMatchWithOpponentById = query({
 // --- Mutations --------------------------------------------------
 
 export const addMatch = mutation({
-  handler: async (ctx, match: Doc<"matches">) => {
+  handler: async (ctx, match: WithoutSystemFields<Doc<"matches">>) => {
     await ctx.db.insert("matches", match);
   },
 });

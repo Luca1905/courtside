@@ -1,16 +1,17 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
+import type { MatchWithOpponentRecord } from "~/convex/matches";
 import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Thermometer } from "~/lib/icons/Thermometer";
+import { calculateMatchDuration } from "~/lib/match";
 import { cn } from "~/lib/utils";
 import { Badge } from "./ui/badge";
-import { useRouter } from "expo-router";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import type { MatchWithOpponentRecord } from "~/convex/matches";
 
 interface MatchCardProps {
   match: MatchWithOpponentRecord;
@@ -39,7 +40,7 @@ export function MatchCard({ match }: MatchCardProps) {
         <View
           className={cn(
             "absolute top-0 left-0 right-0 h-1.5",
-            match.score.won ? "bg-green-500" : "bg-red-500"
+            match.won ? "bg-green-500" : "bg-red-500"
           )}
         />
 
@@ -126,18 +127,20 @@ export function MatchCard({ match }: MatchCardProps) {
                 <Text
                   className={cn(
                     "text-3xl font-black",
-                    match.score.won ? "text-green-700" : "text-red-700"
+                    match.won ? "text-green-700" : "text-red-700"
                   )}
                 >
-                  {match.score.sets.join(" ")}
+                  {match.sets
+                    .map((set) => `${set.home}-${set.guest}`)
+                    .join(" ")}
                 </Text>
                 <Text
                   className={cn(
                     "text-sm font-semibold mt-1",
-                    match.score.won ? "text-green-600" : "text-red-600"
+                    match.won ? "text-green-600" : "text-red-600"
                   )}
                 >
-                  {match.score.won ? "Victory" : "Defeat"}
+                  {match.won ? "Victory" : "Defeat"}
                 </Text>
               </View>
             </View>
@@ -153,7 +156,9 @@ export function MatchCard({ match }: MatchCardProps) {
                     Duration
                   </Text>
                   <Text className="text-sm font-semibold text-foreground">
-                    {formatDuration(match.duration)}
+                    {formatDuration(
+                      calculateMatchDuration(match.startTime, match.endTime)
+                    )}
                   </Text>
                 </View>
               </View>

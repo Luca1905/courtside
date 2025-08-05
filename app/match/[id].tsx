@@ -16,7 +16,12 @@ import { Thermometer } from "~/lib/icons/Thermometer";
 import { Wind } from "~/lib/icons/Wind";
 import { CloudRain } from "~/lib/icons/CloudRain";
 import { Droplets } from "~/lib/icons/Droplets";
-import { formatDate, formatDuration, formatTime } from "~/lib/match";
+import {
+  calculateMatchDuration,
+  formatDate,
+  formatDuration,
+  formatTime,
+} from "~/lib/match";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MatchScreenSkeleton from "~/components/MatchScreenSkeleton";
 
@@ -62,7 +67,7 @@ export default function MatchScreen() {
               <View
                 className={cn(
                   "absolute top-0 left-0 right-0 h-1.5 rounded-t-lg",
-                  match.score.won ? "bg-green-500" : "bg-red-500"
+                  match.won ? "bg-green-500" : "bg-red-500"
                 )}
               />
               <View className="flex-row justify-between items-center">
@@ -70,18 +75,20 @@ export default function MatchScreen() {
                   <Text
                     className={cn(
                       "text-3xl font-black",
-                      match.score.won ? "text-green-700" : "text-red-700"
+                      match.won ? "text-green-700" : "text-red-700"
                     )}
                   >
-                    {match.score.sets.join(" ")}
+                    {match.sets
+                      .map((set) => `${set.home}-${set.guest}`)
+                      .join(" ")}
                   </Text>
                   <Text
                     className={cn(
                       "text-sm font-semibold mt-1",
-                      match.score.won ? "text-green-600" : "text-red-600"
+                      match.won ? "text-green-600" : "text-red-600"
                     )}
                   >
-                    {match.score.won ? "Victory" : "Defeat"}
+                    {match.won ? "Victory" : "Defeat"}
                   </Text>
                 </View>
                 <Badge
@@ -175,7 +182,9 @@ export default function MatchScreen() {
                     Time
                   </Text>
                   <Text className="text-sm font-semibold text-foreground">
-                    {formatTime(match.date)}
+                    {formatTime(match.startTime) +
+                      " - " +
+                      formatTime(match.endTime)}
                   </Text>
                 </View>
               </View>
@@ -197,7 +206,9 @@ export default function MatchScreen() {
                     Duration
                   </Text>
                   <Text className="text-sm font-semibold text-foreground">
-                    {formatDuration(match.duration)}
+                    {formatDuration(
+                      calculateMatchDuration(match.startTime, match.endTime)
+                    )}
                   </Text>
                 </View>
               </View>
@@ -357,7 +368,7 @@ export default function MatchScreen() {
               Set-by-Set Score
             </Text>
             <View className="flex-row gap-3 px-4 pt-2 pb-4">
-              {match.score.sets.map((set, idx) => (
+              {match.sets.map((set, idx) => (
                 <View
                   key={idx}
                   className="flex-1 items-center bg-muted/40 rounded-2xl p-4"
@@ -366,7 +377,7 @@ export default function MatchScreen() {
                     Set {idx + 1}
                   </Text>
                   <Text className="text-lg font-extrabold text-foreground mt-1">
-                    {set}
+                    {set.guest} - {set.home}
                   </Text>
                 </View>
               ))}

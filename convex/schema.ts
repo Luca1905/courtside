@@ -82,11 +82,10 @@ export default defineSchema({
       }),
     }),
     surface: v.union(v.literal("Clay"), v.literal("Hard"), v.literal("Grass")),
-    duration: v.number(),
-    score: v.object({
-      sets: v.array(v.string()),
-      won: v.boolean(),
-    }),
+    startTime: v.number(),
+    endTime: v.number(),
+    sets: v.array(v.object({ guest: v.number(), home: v.number() })),
+    won: v.union(v.literal("guest"), v.literal("home")),
     weather: v.object({
       temperature: v.number(),
       windSpeed: v.number(),
