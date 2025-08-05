@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text } from "react-native";
 
 export default function App() {
   if (Platform.OS === "ios") {
-    return <AppleMaps.View style={{ flex: 1 }} />;
+    return <AppleMaps.View style={StyleSheet.absoluteFill} />;
   } else if (Platform.OS === "android") {
     return <GoogleMaps.View style={StyleSheet.absoluteFill} />;
   } else {
