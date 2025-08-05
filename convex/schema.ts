@@ -74,7 +74,13 @@ export default defineSchema({
     date: v.string(),
     type: v.union(v.literal("Singles"), v.literal("Doubles")),
     opponentId: v.id("players"),
-    venue: v.string(),
+    venue: v.object({
+      name: v.string(),
+      coordinates: v.object({
+        latitude: v.number(),
+        longitude: v.number(),
+      }),
+    }),
     surface: v.union(v.literal("Clay"), v.literal("Hard"), v.literal("Grass")),
     duration: v.number(),
     score: v.object({

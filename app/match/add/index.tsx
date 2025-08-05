@@ -7,7 +7,7 @@ import {
   Pressable,
   Dimensions,
   SafeAreaView,
-  Platform,
+  StyleSheet,
 } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Card } from "~/components/ui/card";
@@ -36,8 +36,11 @@ import {
 } from "~/components/ui/select";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Doc } from "~/convex/_generated/dataModel";
+import { AppleMaps } from "expo-maps";
+import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
+import { useCurrentLocation } from "~/hooks/useCurrentLocation";
+import { DEFAULT_LOCATION_COORDS } from "~/constants/location";
 import { Input } from "~/components/ui/input";
-import { GoogleMaps, AppleMaps, type Coordinates } from "expo-maps";
 
 const MATCH_TYPES = ["Singles", "Doubles"] as const;
 const SURFACES = ["Hard", "Clay", "Grass"] as const;
@@ -49,15 +52,17 @@ const formSchema = z.object({
   endTime: z.date(),
   type: z.enum(MATCH_TYPES),
   surface: z.enum(SURFACES),
-  venue: z.string().min(1, "Enter a venue"),
-  venueLocation: z
-    .object({
-      latitude: z.number(),
-      longitude: z.number(),
-    })
-    .refine((loc) => loc.latitude !== 0 || loc.longitude !== 0, {
-      message: "Pick a location on the map",
-    }),
+  venue: z.object({
+    name: z.string().min(1, "Enter a venue name"),
+    coordinates: z
+      .object({
+        latitude: z.number(),
+        longitude: z.number(),
+      })
+      .refine((l) => l.latitude !== 0 || l.longitude !== 0, {
+        message: "Pick a location on the map",
+      }),
+  }),
   sets: z
     .array(
       z.object({
@@ -85,6 +90,11 @@ function useDuration(start: Date, end: Date) {
 }
 
 export default function AddMatchPage() {
+  const { bottom } = useSafeAreaInsets();
+  const { location, error: locationError } = useCurrentLocation();
+
+  locationError && console.log(locationError);
+
   const {
     control,
     handleSubmit,
@@ -101,8 +111,10 @@ export default function AddMatchPage() {
       endTime: new Date(),
       type: MATCH_TYPES[0],
       surface: SURFACES[0],
-      venue: "",
-      venueLocation: { latitude: 0, longitude: 0 },
+      venue: {
+        name: "",
+        coordinates: DEFAULT_LOCATION_COORDS,
+      },
       sets: [
         {
           home: 0,
@@ -126,11 +138,20 @@ export default function AddMatchPage() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+  const [showVenuePicker, setShowVenuePicker] = useState(false);
 
-  const [showMapPicker, setShowMapPicker] = useState(false);
-  const [tempLocation, setTempLocation] = useState<Coordinates | null>(null);
+  const [tempName, setTempName] = useState(""); // text field inside modal
+  const [tempLoc, setTempLoc] = useState<{
+    latitude: number;
+    longitude: number;
+  }>(DEFAULT_LOCATION_COORDS);
 
-  const MapView = Platform.OS === "ios" ? AppleMaps.View : GoogleMaps.View;
+  useEffect(() => {
+    if (location === null) return;
+
+    setValue("venue.coordinates", location.coords, { shouldValidate: true });
+    setTempLoc(location.coords);
+  }, [location, setValue]);
 
   const watchedValues = watch();
   const selectedOpponent = opponents?.find(
@@ -289,125 +310,132 @@ export default function AddMatchPage() {
                 </Text>
               )}
             </View>
-
-            {/* VENUE */}
-            <View className="flex-1">
-              <Label id="venueLabel" className="font-semibold mb-2">
-                Venue
-              </Label>
-              <Controller
-                control={control}
-                name="venue"
-                render={({ field: { value, onChange } }) => (
-                  <Input
-                    placeholder="Enter venue"
-                    value={value}
-                    onChangeText={onChange}
-                    aria-labelledby="venueLabel"
-                    aria-errormessage="venueError"
-                  />
-                )}
-              />
-              {errors.venue && (
-                <Text id="venueError" className="text-destructive text-sm mt-1">
-                  {errors.venue.message}
-                </Text>
-              )}
-            </View>
-            <View>
-              <Label className="font-semibold mb-2">Pick Venue Location</Label>
-              <Controller
-                control={control}
-                name="venueLocation"
-                render={({ field: { value, onChange } }) => (
-                  <>
-                    <Pressable
-                      onPress={() => {
-                        setTempLocation(
-                          value.latitude !== 0 || value.longitude !== 0
-                            ? value
-                            : null
-                        );
-                        setShowMapPicker(true);
-                      }}
-                      className="p-4 bg-muted/50 rounded-lg flex-row items-center justify-between"
-                    >
-                      <Text className="flex-1">
-                        {value.latitude && value.longitude
-                          ? `${value.latitude.toFixed(4)}, ${value.longitude.toFixed(4)}`
-                          : "Tap to select on map"}
-                      </Text>
-                      <MaterialCommunityIcons
-                        name="map-marker"
-                        size={20}
-                        color="#64748b"
-                      />
-                    </Pressable>
-                    {errors.venueLocation && (
-                      <Text className="text-destructive text-sm mt-1">
-                        {errors.venueLocation.message}
-                      </Text>
-                    )}
-
-                    {/* Map Picker Modal */}
-                    <Modal visible={showMapPicker} animationType="slide">
-                      <SafeAreaView className="flex-1 bg-background">
-                        <View className="flex-1">
-                          <MapView
-                            style={{ flex: 1 }}
-                            cameraPosition={{
-                              coordinates: tempLocation ?? {
-                                latitude: 37.78825,
-                                longitude: -122.4324,
-                              },
-                              zoom: 14,
-                            }}
-                            onMapClick={({ coordinates }) => {
-                              setTempLocation(coordinates);
-                            }}
-                            markers={
-                              tempLocation
-                                ? [
-                                    {
-                                      id: "selected",
-                                      coordinates: tempLocation,
-                                    },
-                                  ]
-                                : []
-                            }
-                          />
-                          <View className="p-4 flex-row justify-between">
-                            <Button
-                              variant="secondary"
-                              onPress={() => setShowMapPicker(false)}
-                              className="rounded-full"
-                            >
-                              <Text>Cancel</Text>
-                            </Button>
-                            <Button
-                              onPress={() => {
-                                if (tempLocation) {
-                                  onChange(tempLocation);
-                                  trigger("venueLocation");
-                                }
-                                setShowMapPicker(false);
-                              }}
-                              disabled={!tempLocation}
-                              className="rounded-full bg-green-600"
-                            >
-                              <Text className="text-primary-foreground font-bold">
-                                Confirm
-                              </Text>
-                            </Button>
-                          </View>
-                        </View>
-                      </SafeAreaView>
-                    </Modal>
-                  </>
-                )}
-              />
-            </View>
           </View>
+
+          <Label className="font-semibold mb-2">Venue</Label>
+          <Controller
+            control={control}
+            name="venue"
+            render={({ field: { value, onChange } }) => (
+              <>
+                <Pressable
+                  onPress={() => {
+                    setTempName(value.name);
+                    setTempLoc(value.coordinates);
+                    setShowVenuePicker(true);
+                  }}
+                  className="p-4 bg-muted/50 rounded-lg mb-6"
+                >
+                  {value.name ? (
+                    <>
+                      <Text className="font-semibold">{value.name}</Text>
+                      <Text className="text-sm text-muted-foreground">
+                        {value.coordinates.latitude.toFixed(4)},{" "}
+                        {value.coordinates.longitude.toFixed(4)}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text>Select venue</Text>
+                  )}
+                </Pressable>
+                {errors.venue && (
+                  <Text className="text-destructive text-sm mt-1">
+                    {errors.venue.message}
+                  </Text>
+                )}
+
+                {/*  Modal with map + bottom sheet */}
+                <Modal
+                  visible={showVenuePicker}
+                  animationType="slide"
+                  transparent={true}
+                >
+                  {/* full-screen map */}
+                  <View style={StyleSheet.absoluteFill}>
+                    <AppleMaps.View
+                      style={{ flex: 1 }}
+                      cameraPosition={{
+                        coordinates: tempLoc,
+                        zoom: 15,
+                      }}
+                      onCameraMove={({ coordinates }) => {
+                        if (
+                          typeof coordinates.latitude !== "number" ||
+                          typeof coordinates.longitude !== "number"
+                        ) {
+                          console.error("Failed getting coordinates");
+                          return;
+                        }
+                        setTempLoc({
+                          latitude: coordinates.latitude,
+                          longitude: coordinates.longitude,
+                        });
+                      }}
+                      properties={{
+                        isMyLocationEnabled: true,
+                        isTrafficEnabled: false,
+                        selectionEnabled: true,
+                        mapType: AppleMapsMapType.HYBRID,
+                      }}
+                      uiSettings={{
+                        scaleBarEnabled: true,
+                        myLocationButtonEnabled: true,
+                        compassEnabled: true,
+                        togglePitchEnabled: false,
+                      }}
+                    />
+                  </View>
+
+                  {/* floating pin */}
+                  <View
+                    style={StyleSheet.absoluteFill}
+                    pointerEvents="none"
+                    className={`justify-center -translate-y-4 items-center pt-[${bottom}px]`}
+                  >
+                    <MaterialCommunityIcons
+                      name="map-marker"
+                      size={32}
+                      color="red"
+                    />
+                  </View>
+
+                  {/* bottom sheet: absolutely positioned with 50% white bg */}
+                  <View
+                    pointerEvents="box-none"
+                    className="absolute bottom-0 left-0 right-0 p-4 bg-white/50"
+                  >
+                    <SafeAreaView>
+                      <Input
+                        placeholder="Venue name"
+                        value={tempName}
+                        onChangeText={setTempName}
+                      />
+                      <View className="flex-row justify-between mt-4">
+                        <Button
+                          variant="secondary"
+                          onPress={() => setShowVenuePicker(false)}
+                        >
+                          <Text>Cancel</Text>
+                        </Button>
+                        <Button
+                          onPress={() => {
+                            onChange({ name: tempName, location: tempLoc });
+                            trigger("venue");
+                            setShowVenuePicker(false);
+                          }}
+                          className="bg-green-600"
+                        >
+                          <Text className="text-primary-foreground font-bold">
+                            Confirm
+                          </Text>
+                        </Button>
+                      </View>
+                    </SafeAreaView>
+                  </View>
+                </Modal>
+              </>
+            )}
+          />
 
           <View className="flex-row gap-4 mb-6">
             <View className="flex-1">
@@ -468,7 +496,7 @@ export default function AddMatchPage() {
             </Text>
           </View>
 
-          {/* Merged Match Type & Surface using Selects */}
+          {/*  Match Type & Surface */}
           <View className="gap-6">
             <View>
               <Label className="font-semibold mb-2">Match Type</Label>

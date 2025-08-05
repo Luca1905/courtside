@@ -186,7 +186,7 @@ export default function MatchScreen() {
                     Venue
                   </Text>
                   <Text className="text-sm font-semibold text-foreground">
-                    {match.venue}
+                    {match.venue.name}
                   </Text>
                 </View>
               </View>

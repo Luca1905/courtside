@@ -1,31 +1,16 @@
 import { AppleMaps } from "expo-maps";
 import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
 import { Platform, StyleSheet, Text, View } from "react-native";
-import * as Location from "expo-location";
-import { useEffect, useState } from "react";
+import { useCurrentLocation } from "~/hooks/useCurrentLocation";
 
 export default function Map() {
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
-  );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { location, error, isLoading } = useCurrentLocation();
 
-  useEffect(() => {
-    async function getCurrentLocation() {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    }
-
-    getCurrentLocation();
-  }, []);
-
-  errorMsg && console.log(errorMsg);
+  error && console.log(error);
 
   switch (Platform.OS) {
     case "ios":
@@ -57,33 +42,13 @@ export default function Map() {
           >
             <View
               style={{
-                width: 30,
-                height: 30,
+                width: 20,
+                height: 20,
                 backgroundColor: "#FF0000",
                 borderRadius: 15,
                 borderWidth: 3,
                 borderColor: "#FFFFFF",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.3,
-                shadowRadius: 4,
                 elevation: 5,
-              }}
-            />
-            <View
-              style={{
-                width: 0,
-                height: 0,
-                backgroundColor: "transparent",
-                borderStyle: "solid",
-                borderLeftWidth: 8,
-                borderRightWidth: 8,
-                borderBottomWidth: 15,
-                borderLeftColor: "transparent",
-                borderRightColor: "transparent",
-                borderBottomColor: "#FF0000",
-                transform: [{ rotate: "180deg" }],
-                marginTop: -3,
               }}
             />
           </View>

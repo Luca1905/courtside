@@ -91,7 +91,7 @@ export const sortMatches = (
       case "opponent":
         return a.opponent.name.localeCompare(b.opponent.name);
       case "venue":
-        return a.venue.localeCompare(b.venue);
+        return a.venue.name.localeCompare(b.venue.name);
       default:
         return 0;
     }
@@ -103,7 +103,7 @@ export const filterMatches = (
   filters: {
     surface?: string;
     opponent?: string;
-    venue?: string;
+    venueName?: string;
     dateFrom?: string;
     dateTo?: string;
   }
@@ -118,8 +118,8 @@ export const filterMatches = (
     )
       return false;
     if (
-      filters.venue &&
-      !match.venue.toLowerCase().includes(filters.venue.toLowerCase())
+      filters.venueName &&
+      !match.venue.name.toLowerCase().includes(filters.venueName.toLowerCase())
     )
       return false;
     if (filters.dateFrom && new Date(match.date) < new Date(filters.dateFrom))
