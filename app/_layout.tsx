@@ -97,6 +97,37 @@ export default function RootLayout() {
               name="player/[id]"
               options={{ headerShown: true, headerTitle: "Player Details" }}
             />
+            <Stack.Screen
+              name="match/add/index"
+              options={{
+                title: "Add Match",
+                headerShown: false,
+                presentation: "formSheet",
+                gestureDirection: "vertical",
+                animation: "slide_from_bottom",
+                sheetGrabberVisible: true,
+                sheetInitialDetentIndex: 0,
+                sheetAllowedDetents: [0.5, 0.75, 1],
+                sheetCornerRadius: 20,
+                sheetExpandsWhenScrolledToEdge: true,
+                sheetElevation: 24,
+              }}
+            />
+            <Stack.Screen
+              name="player/add/index"
+              options={{
+                title: "Add Player",
+                presentation: "formSheet",
+                gestureDirection: "vertical",
+                animation: "slide_from_bottom",
+                sheetGrabberVisible: true,
+                sheetInitialDetentIndex: 0,
+                sheetAllowedDetents: [0.5, 0.75, 1],
+                sheetCornerRadius: 20,
+                sheetExpandsWhenScrolledToEdge: true,
+                sheetElevation: 24,
+              }}
+            />
           </Stack>
           <PortalHost />
         </ThemeProvider>

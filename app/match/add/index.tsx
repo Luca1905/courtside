@@ -205,7 +205,7 @@ export default function AddMatchPage() {
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ padding: 12, paddingBottom: 32 }}
@@ -724,6 +724,6 @@ export default function AddMatchPage() {
         }}
         onCancel={() => setShowEndPicker(false)}
       />
-    </View>
+    </>
   );
 }
