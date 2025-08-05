@@ -1,4 +1,4 @@
-import { SafeAreaView, View, FlatList, RefreshControl } from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import { Text } from "~/components/ui/text";
 import { MatchCard } from "~/components/MatchCard";
 import { Input } from "~/components/ui/input";
@@ -35,11 +35,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background mt-4">
+    <View className="bg-background mt-4">
       <FlatList
         data={filteredMatches}
         keyExtractor={(item) => item._id}
-        contentContainerClassName="pb-16"
         ListHeaderComponent={
           <View className="px-3 mb-2">
             <View className="flex-row items-center gap-2">
@@ -55,13 +54,11 @@ export default function HomeScreen() {
                   className="pl-10 bg-muted/50 h-10"
                 />
               </View>
-
               <ThemeToggle />
             </View>
           </View>
         }
         renderItem={({ item }) => <MatchCard match={item} />}
-        ItemSeparatorComponent={() => <View className="h-2" />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -74,6 +71,6 @@ export default function HomeScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
