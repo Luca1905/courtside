@@ -1,26 +1,35 @@
 import "~/styles/global.css";
 
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { Theme } from "@react-navigation/native";
 import {
-  ThemeProvider,
-  DefaultTheme,
   DarkTheme,
+  DefaultTheme,
   getFocusedRouteNameFromRoute,
+  ThemeProvider,
 } from "@react-navigation/native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PortalHost } from "@rn-primitives/portal";
+import { ConvexReactClient } from "convex/react";
 import { Link, Stack } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
+import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useQuickActions } from "~/hooks/useQuickActions";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { PortalHost } from "@rn-primitives/portal";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { useQuickActions } from "~/hooks/useQuickActions";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
 });
+
+const secureStorage = {
+  getItem: SecureStore.getItemAsync,
+  setItem: SecureStore.setItemAsync,
+  removeItem: SecureStore.deleteItemAsync,
+};
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -55,7 +64,14 @@ export default function RootLayout() {
   }
 
   return (
-    <ConvexProvider client={convex}>
+    <ConvexAuthProvider
+      client={convex}
+      storage={
+        Platform.OS === "android" || Platform.OS === "ios"
+          ? secureStorage
+          : undefined
+      }
+    >
       <GestureHandlerRootView>
         <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
@@ -65,7 +81,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen
-              name="(tabs)"
+              name="(authenticated)/(tabs)"
               options={({ route }) => {
                 // if no tab is focused yet, default to index
                 const focused = getFocusedRouteNameFromRoute(route) || "index";
@@ -111,7 +127,7 @@ export default function RootLayout() {
             <Stack.Screen name="+not-found" />
 
             <Stack.Screen
-              name="match/[id]"
+              name="(authenticated)/match/[id]"
               options={{
                 headerShown: true,
                 headerTitle: "Match Details",
@@ -127,7 +143,7 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="player/[id]"
+              name="(authenticated)/player/[id]"
               options={{
                 headerShown: true,
                 headerTitle: "Player Details",
@@ -143,7 +159,7 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="match/add/index"
+              name="(authenticated)/match/add/index"
               options={{
                 title: "Add Match",
                 headerShown: true,
@@ -154,7 +170,7 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="player/add/index"
+              name="(authenticated)/player/add/index"
               options={{
                 title: "Add Player",
                 headerBackVisible: true,
@@ -185,6 +201,6 @@ export default function RootLayout() {
           <PortalHost />
         </ThemeProvider>
       </GestureHandlerRootView>
-    </ConvexProvider>
+    </ConvexAuthProvider>
   );
 }

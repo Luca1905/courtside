@@ -182,7 +182,7 @@ function SelectItem({
           />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className="text-sm native:text-lg text-popover-foreground native:text-base web:group-focus:text-accent-foreground" />
+      <SelectPrimitive.ItemText className="text-sm native:text-lg text-popover-foreground web:group-focus:text-accent-foreground" />
     </SelectPrimitive.Item>
   );
 }

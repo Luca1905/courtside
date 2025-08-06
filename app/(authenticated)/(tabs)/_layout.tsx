@@ -1,5 +1,5 @@
-import { Tabs } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Tabs } from "expo-router";
 
 import React from "react";
 
