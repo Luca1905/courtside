@@ -1,5 +1,9 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+import { WithoutSystemFields } from "convex/server";
+import { Doc } from "./_generated/dataModel";
+
+// --- Queries --------------------------------------------------
 
 export const getById = query({
   args: {
@@ -40,5 +44,13 @@ export const getResultForPlayer = query({
     );
 
     return results;
+  },
+});
+
+// --- Mutations --------------------------------------------------
+
+export const addPlayer = mutation({
+  handler: async (ctx, data: WithoutSystemFields<Doc<"players">>) => {
+    await ctx.db.insert("players", data);
   },
 });

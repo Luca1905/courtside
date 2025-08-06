@@ -39,11 +39,7 @@ export default function Map() {
               togglePitchEnabled: false,
             }}
           />
-          <View
-            style={StyleSheet.absoluteFill}
-            pointerEvents="none"
-            className="justify-center items-center"
-          >
+          <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <View
               style={{
                 width: 20,

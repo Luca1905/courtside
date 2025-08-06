@@ -8,7 +8,7 @@ import {
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { NAV_THEME } from "~/lib/constants";
@@ -16,6 +16,8 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { Text } from "~/components/ui/text";
+import { Button } from "~/components/ui/button";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -34,6 +36,7 @@ const DARK_THEME: Theme = {
 export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
+  const router = useRouter();
   const hasMounted = React.useRef(false);
   const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -58,17 +61,7 @@ export default function RootLayout() {
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
           <Stack
             screenOptions={{
-              headerTitle: "",
               headerBackTitle: "Back",
-              headerRight: () => (
-                <Link href="/match/add">
-                  <MaterialCommunityIcons
-                    name="plus-box-multiple"
-                    size={24}
-                    color={isDarkColorScheme ? "white" : "black"}
-                  />
-                </Link>
-              ),
             }}
           >
             <Stack.Screen
@@ -77,57 +70,126 @@ export default function RootLayout() {
                 // if no tab is focused yet, default to index
                 const focused = getFocusedRouteNameFromRoute(route) || "index";
 
-                const titles: Record<string, string> = {
-                  index: "Matches",
-                  players: "Players",
-                };
-
-                return {
-                  headerShown: true,
-                  headerTitle: titles[focused] ?? "",
-                };
+                switch (focused) {
+                  case "index":
+                    return {
+                      headerShown: true,
+                      headerTitle: "Matches",
+                      headerRight: () => (
+                        <Link href="/match/add/">
+                          <MaterialCommunityIcons
+                            name="plus-box-multiple"
+                            size={24}
+                            color={isDarkColorScheme ? "white" : "black"}
+                          />
+                        </Link>
+                      ),
+                    };
+                  case "players":
+                    return {
+                      headerShown: true,
+                      headerTitle: "Players",
+                      headerRight: () => (
+                        <Link href="/player/add/">
+                          <MaterialCommunityIcons
+                            name="plus-box-multiple"
+                            size={24}
+                            color={isDarkColorScheme ? "white" : "black"}
+                          />
+                        </Link>
+                      ),
+                    };
+                  case "map":
+                    return {
+                      headerShown: false,
+                    };
+                  default:
+                    return {};
+                }
               }}
             />
             <Stack.Screen name="+not-found" />
+
             <Stack.Screen
               name="match/[id]"
-              options={{ headerShown: true, headerTitle: "Match Details" }}
+              options={{
+                headerShown: true,
+                headerTitle: "Match Details",
+                headerRight: () => (
+                  <Link href="/match/add/">
+                    <MaterialCommunityIcons
+                      name="plus-box-multiple"
+                      size={24}
+                      color={isDarkColorScheme ? "white" : "black"}
+                    />
+                  </Link>
+                ),
+              }}
             />
             <Stack.Screen
               name="player/[id]"
-              options={{ headerShown: true, headerTitle: "Player Details" }}
+              options={{
+                headerShown: true,
+                headerTitle: "Player Details",
+                headerRight: () => (
+                  <Link href="/match/add/">
+                    <MaterialCommunityIcons
+                      name="plus-box-multiple"
+                      size={24}
+                      color={isDarkColorScheme ? "white" : "black"}
+                    />
+                  </Link>
+                ),
+              }}
             />
             <Stack.Screen
               name="match/add/index"
               options={{
                 title: "Add Match",
-                headerShown: false,
-                presentation: "formSheet",
+                headerLeft: () => (
+                  <Button onPress={() => router.back()} variant="ghost">
+                    <Text>Back</Text>
+                  </Button>
+                ),
+                headerShown: true,
+                presentation: "containedModal",
                 gestureDirection: "vertical",
                 animation: "slide_from_bottom",
-                sheetGrabberVisible: true,
-                sheetInitialDetentIndex: 0,
-                sheetAllowedDetents: [0.5, 0.75, 1],
-                sheetCornerRadius: 20,
-                sheetExpandsWhenScrolledToEdge: true,
-                sheetElevation: 24,
               }}
             />
             <Stack.Screen
               name="player/add/index"
               options={{
                 title: "Add Player",
-                presentation: "formSheet",
+                headerLeft: () => (
+                  <Button onPress={() => router.back()} variant="ghost">
+                    <Text>Back</Text>
+                  </Button>
+                ),
+                headerBackVisible: true,
+                headerShown: true,
+                presentation: "containedModal",
                 gestureDirection: "vertical",
                 animation: "slide_from_bottom",
-                sheetGrabberVisible: true,
-                sheetInitialDetentIndex: 0,
-                sheetAllowedDetents: [0.5, 0.75, 1],
-                sheetCornerRadius: 20,
-                sheetExpandsWhenScrolledToEdge: true,
-                sheetElevation: 24,
               }}
             />
+            {
+              // Native modal
+              // <Stack.Screen
+              //   name="native_modal"
+              //   options={{
+              //     presentation: "formSheet",
+              //     gestureDirection: "vertical",
+              //     animation: "slide_from_bottom",
+              //     sheetGrabberVisible: true,
+              //     sheetInitialDetentIndex: 0,
+              //     sheetAllowedDetents: [0.5, 0.75, 1],
+              //     sheetCornerRadius: 20,
+              //     sheetExpandsWhenScrolledToEdge: true,
+              //     sheetElevation: 24,
+              //   }}
+              // />
+            }
           </Stack>
           <PortalHost />
         </ThemeProvider>
