@@ -1,31 +1,14 @@
-import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { query } from "./_generated/server";
+import { getAllMatchesPlayedForPlayer } from "./matches";
 
 export const getPlayerStats = query({
   args: { playerId: v.id("players") },
-  returns: v.object({
-    current: v.object({
-      aces: v.number(),
-      doubleFaults: v.number(),
-      firstServePercentage: v.number(),
-      firstServeWonPercentage: v.number(),
-    }),
-    trend: v.object({
-      aces: v.number(),
-      doubleFaults: v.number(),
-      firstServePercentage: v.number(),
-      firstServeWonPercentage: v.number(),
-    }),
-    history: v.object({
-      firstServeWonPercentage: v.array(v.number()),
-    }),
-  }),
   handler: async (ctx, args) => {
-    const matches = await ctx.db
-      .query("matches")
-      .withIndex("by_opponent", (q) => q.eq("opponentId", args.playerId))
-      .order("asc")
-      .collect();
+    const matches = await getAllMatchesPlayedForPlayer(ctx, args.playerId);
+    if (!matches) {
+      return null;
+    }
 
     const playerMatchStats = [];
     let totalAces = 0;
