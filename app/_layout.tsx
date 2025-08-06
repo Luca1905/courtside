@@ -16,6 +16,7 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { useQuickActions } from "~/hooks/useQuickActions";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -34,6 +35,8 @@ const DARK_THEME: Theme = {
 export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
+  useQuickActions();
+
   const hasMounted = React.useRef(false);
   const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
