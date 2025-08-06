@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
 import { AppleMaps } from "expo-maps";
 import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
@@ -92,6 +92,7 @@ function useDuration(start: Date, end: Date) {
 }
 
 export default function AddMatchPage() {
+  const router = useRouter();
   const { bottom } = useSafeAreaInsets();
   const {
     isLoading: isLoadingLocation,
@@ -675,6 +676,15 @@ export default function AddMatchPage() {
                   </Text>
                 </Pressable>
               ))}
+              <Button
+                className="p-4 mb-3 bg-blue-500 rounded-lg"
+                onPress={() => {
+                  setShowOpponentPicker(false);
+                  router.push("/player/add");
+                }}
+              >
+                <Text className="text-center text-white">Add Opponent</Text>
+              </Button>
             </ScrollView>
             <Button
               variant="secondary"

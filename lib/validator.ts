@@ -2,7 +2,7 @@ type SetScore = { guest: number; home: number };
 
 type MatchResult = {
   valid: boolean;
-  winner: "guest" | "home" | null;
+  winner: "Guest" | "Home" | null;
 };
 
 /**
@@ -64,7 +64,7 @@ export function validateMatchScore(sets: SetScore[]): MatchResult {
     }
     return {
       valid: true,
-      winner: guestWins > homeWins ? "guest" : "home",
+      winner: guestWins > homeWins ? "Guest" : "Home",
     };
   }
 
@@ -85,6 +85,6 @@ export function validateMatchScore(sets: SetScore[]): MatchResult {
   }
   return {
     valid: true,
-    winner: guestWins > homeWins ? "guest" : "home",
+    winner: guestWins > homeWins ? "Guest" : "Home",
   };
 }

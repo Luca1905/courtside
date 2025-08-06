@@ -29,17 +29,20 @@ const formSchema = z.object({
   club: z.string().optional(),
   ranking: z
     .number("Ranking must be a number")
+    .int("Must be an integer")
     .min(1, "Must be at least 1")
     .optional(),
   hittingArm: z.enum(ARM_OPTIONS).optional(),
   backhandGrip: z.enum(GRIP_OPTIONS).optional(),
   playingSince: z
-    .int("Year must be a valid number")
+    .number("Year must be a number")
+    .int("Must be an integer")
     .min(1900, "Year too old")
     .max(new Date().getFullYear(), "Cannot be in future")
     .optional(),
   birthYear: z
-    .int("Year must be a valid number")
+    .number("Year must be a number")
+    .int("Must be an integer")
     .min(1900, "Year too old")
     .max(new Date().getFullYear(), "Cannot be in future")
     .optional(),
@@ -50,6 +53,7 @@ export default function AddPlayerPage() {
   const {
     control,
     handleSubmit,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -135,13 +139,16 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="ranking"
-          render={({ field }) => (
+          render={({ field: { value, onChange, onBlur } }) => (
             <Input
               placeholder="e.g. 16 (optional)"
               keyboardType="numeric"
-              value={field.value != null ? String(field.value) : ""}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
+              value={value != null ? String(value) : ""}
+              onChangeText={(t) => {
+                onChange(Number(t));
+                trigger("ranking");
+              }}
+              onBlur={onBlur}
             />
           )}
         />
@@ -156,11 +163,13 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="hittingArm"
-          render={({ field }) => (
+          render={({ field: { onChange } }) => (
             <Select
               defaultValue={undefined}
-              onValueChange={field.onChange}
-              className="z-100"
+              onValueChange={(v) => {
+                onChange(v?.value);
+                trigger("hittingArm");
+              }}
             >
               <SelectTrigger>
                 <SelectValue
@@ -197,8 +206,14 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="backhandGrip"
-          render={({ field }) => (
-            <Select defaultValue={undefined} onValueChange={field.onChange}>
+          render={({ field: { onChange } }) => (
+            <Select
+              defaultValue={undefined}
+              onValueChange={(v) => {
+                onChange(v?.value);
+                trigger("backhandGrip");
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="One-Handed / Two-Handed" />
               </SelectTrigger>
@@ -226,13 +241,16 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="playingSince"
-          render={({ field }) => (
+          render={({ field: { value, onChange, onBlur } }) => (
             <Input
               placeholder="Year (optional)"
               keyboardType="numeric"
-              value={field.value != null ? String(field.value) : ""}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
+              value={value != null ? String(value) : ""}
+              onChangeText={(t) => {
+                onChange(Number(t));
+                trigger("ranking");
+              }}
+              onBlur={onBlur}
             />
           )}
         />
@@ -247,13 +265,16 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="birthYear"
-          render={({ field }) => (
+          render={({ field: { value, onChange, onBlur } }) => (
             <Input
               placeholder="Year (optional)"
               keyboardType="numeric"
-              value={field.value != null ? String(field.value) : ""}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
+              value={value != null ? String(value) : ""}
+              onChangeText={(t) => {
+                onChange(Number(t));
+                trigger("ranking");
+              }}
+              onBlur={onBlur}
             />
           )}
         />

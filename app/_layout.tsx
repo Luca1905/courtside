@@ -8,7 +8,7 @@ import {
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Link, Stack, useRouter } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { NAV_THEME } from "~/lib/constants";
@@ -16,8 +16,6 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { Text } from "~/components/ui/text";
-import { Button } from "~/components/ui/button";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -36,7 +34,6 @@ const DARK_THEME: Theme = {
 export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
-  const router = useRouter();
   const hasMounted = React.useRef(false);
   const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -146,13 +143,9 @@ export default function RootLayout() {
               name="match/add/index"
               options={{
                 title: "Add Match",
-                headerLeft: () => (
-                  <Button onPress={() => router.back()} variant="ghost">
-                    <Text>Back</Text>
-                  </Button>
-                ),
                 headerShown: true,
-                presentation: "containedModal",
+                headerBackVisible: true,
+                presentation: "card",
                 gestureDirection: "vertical",
                 animation: "slide_from_bottom",
               }}
@@ -161,14 +154,9 @@ export default function RootLayout() {
               name="player/add/index"
               options={{
                 title: "Add Player",
-                headerLeft: () => (
-                  <Button onPress={() => router.back()} variant="ghost">
-                    <Text>Back</Text>
-                  </Button>
-                ),
                 headerBackVisible: true,
                 headerShown: true,
-                presentation: "containedModal",
+                presentation: "card",
                 gestureDirection: "vertical",
                 animation: "slide_from_bottom",
               }}
