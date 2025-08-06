@@ -1,25 +1,29 @@
-import { View, FlatList, RefreshControl } from "react-native";
-import { Text } from "~/components/ui/text";
-import { MatchCard } from "~/components/MatchCard";
-import { Input } from "~/components/ui/input";
+import { FlatList, RefreshControl, View } from "react-native";
 import HomeScreenSkeleton from "~/components/HomeScreenSkeleton";
-import { Search } from "~/lib/icons/Search";
+import { MatchCard } from "~/components/MatchCard";
 import { ThemeToggle } from "~/components/ThemeToggle";
+import { Input } from "~/components/ui/input";
+import { Text } from "~/components/ui/text";
+import { Search } from "~/lib/icons/Search";
 
 import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
 
+import { Link } from "expo-router";
 import { useState } from "react";
 
 export default function HomeScreen() {
-  const matchesWithOpponent = useQuery(api.matches.getAllMatchesWithOpponent);
+  let matchesWithOpponent = useQuery(api.matches.getAllMatchesWithOpponent);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const playerForUser = useQuery(api.players.getForCurrentUser);
 
   // Loading state
   if (matchesWithOpponent === undefined) {
     return <HomeScreenSkeleton />;
   }
+
+  if (matchesWithOpponent === null) matchesWithOpponent = [];
 
   const filteredMatches = matchesWithOpponent.filter(
     (m) =>
@@ -63,13 +67,30 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View className="flex-1 items-center justify-center p-8">
-            <Text className="text-muted-foreground text-center">
-              No matches found.
-            </Text>
-          </View>
-        }
+        ListEmptyComponent={() => {
+          if (!playerForUser) {
+            return (
+              <View className="flex-1 items-center justify-center p-8">
+                <Link
+                  href="/player/add"
+                  className="px-4 py-2 rounded bg-blue-500"
+                >
+                  <Text className="text-white text-center text-2xl">
+                    Create my player profile
+                  </Text>
+                </Link>
+              </View>
+            );
+          }
+
+          return (
+            <View className="flex-1 items-center justify-center p-8">
+              <Text className="text-muted-foreground text-center">
+                No matches found.
+              </Text>
+            </View>
+          );
+        }}
       />
     </View>
   );

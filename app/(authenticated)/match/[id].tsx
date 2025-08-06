@@ -35,10 +35,28 @@ export default function MatchScreen() {
     api.matches.getMatchWithOpponentById,
     typeof matchId === "string" ? { matchId: matchId as Id<"matches"> } : "skip"
   );
+  const playerForUser = useQuery(api.players.getForCurrentUser);
 
-  if (match === undefined) {
+  if (match === undefined || playerForUser === undefined) {
     return <MatchScreenSkeleton />;
   }
+
+  if (playerForUser === null) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+        <Text className="text-lg text-gray-500 mb-4">
+          You are not authenticated
+        </Text>
+        <Pressable
+          onPress={() => router.replace("/welcome")}
+          className="bg-green-600 px-4 py-2 rounded"
+        >
+          <Text className="text-white text-base">Go Back</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
+
   if (match === null) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
@@ -53,7 +71,9 @@ export default function MatchScreen() {
     );
   }
 
-  const won = match.winner === match.playerTeam;
+  const playerTeam =
+    playerForUser._id === match.players.guest ? "Guest" : "Home";
+  const won = match.winner === playerTeam;
 
   return (
     <>
@@ -81,7 +101,7 @@ export default function MatchScreen() {
                       won ? "text-green-700" : "text-red-700"
                     )}
                   >
-                    {formatMatchScore(match.sets, match.playerTeam)}
+                    {formatMatchScore(match.sets, playerTeam)}
                   </Text>
                   <Text
                     className={cn(

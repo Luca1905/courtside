@@ -1,4 +1,4 @@
-import type { Doc } from "~/convex/_generated/dataModel";
+import type { Doc, Id } from "~/convex/_generated/dataModel";
 import type { MatchWithOpponentRecord } from "~/convex/matches";
 
 export const calculateMatchDuration = (
@@ -9,11 +9,15 @@ export const calculateMatchDuration = (
   return Math.round(durationMs / 60000);
 };
 
-export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
+export const calculatePerformanceStats = (
+  playerId: Id<"players">,
+  matches: Doc<"matches">[]
+) => {
   const totalMatches = matches.length;
-  const wins = matches.filter(
-    (match) => match.winner === match.playerTeam
-  ).length;
+  const wins = matches.filter((match) => {
+    const playerTeam = match.players.guest === playerId ? "Guest" : "Home";
+    return match.winner === playerTeam;
+  }).length;
   const losses = totalMatches - wins;
   const winPercentage =
     totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
@@ -32,11 +36,12 @@ export const calculatePerformanceStats = (matches: Doc<"matches">[]) => {
   } = {};
 
   matches.forEach((match) => {
+    const playerTeam = match.players.guest === playerId ? "Guest" : "Home";
     if (!surfaceStats[match.surface]) {
       surfaceStats[match.surface] = { matches: 0, wins: 0, winPercentage: 0 };
     }
     surfaceStats[match.surface].matches++;
-    if (match.winner === match.playerTeam) {
+    if (match.winner === playerTeam) {
       surfaceStats[match.surface].wins++;
     }
   });
@@ -84,14 +89,16 @@ export const formatTime = (dateInput: string | number): string => {
 
 export const getHeadToHeadRecord = (
   matches: MatchWithOpponentRecord[],
-  opponentName: string
+  opponentName: string,
+  userPlayerId: Id<"players">
 ): { wins: number; losses: number } => {
   const h2hMatches = matches.filter(
     (match) => match.opponent.name === opponentName
   );
-  const wins = h2hMatches.filter(
-    (match) => match.winner === match.playerTeam
-  ).length;
+  const wins = h2hMatches.filter((match) => {
+    const playerTeam = match.players.guest === userPlayerId ? "Guest" : "Home";
+    return match.winner === playerTeam;
+  }).length;
   const losses = h2hMatches.length - wins;
   return { wins, losses };
 };

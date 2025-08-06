@@ -1,20 +1,22 @@
 import { useQuery } from "convex/react";
-import { api } from "~/convex/_generated/api";
-import { PlayerCard } from "~/components/PlayerCard";
-import type { Doc } from "~/convex/_generated/dataModel";
 import { useState } from "react";
-import { RefreshControl, FlatList, View, SafeAreaView } from "react-native";
-import { Search } from "~/lib/icons/Search";
+import { FlatList, RefreshControl, SafeAreaView, View } from "react-native";
+import { PlayerCard } from "~/components/PlayerCard";
+import { ThemeToggle } from "~/components/ThemeToggle";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { ThemeToggle } from "~/components/ThemeToggle";
+import { api } from "~/convex/_generated/api";
+import type { Doc } from "~/convex/_generated/dataModel";
+import { Search } from "~/lib/icons/Search";
 
 function PlayerListItem({ player }: { player: Doc<"players"> }) {
   const matchResults = useQuery(api.players.getResultForPlayer, {
     playerId: player._id,
   });
 
-  return <PlayerCard player={player} matchResults={matchResults} />;
+  return (
+    <PlayerCard player={player} matchResults={matchResults ?? undefined} />
+  );
 }
 
 export default function PlayersPage() {

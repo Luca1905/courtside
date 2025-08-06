@@ -33,17 +33,17 @@ export async function fetchPlayerById(
     .first();
 }
 
-async function getUserIdForPlayerId(
-  ctx: QueryCtx,
-  playerId: Id<"players">
-): Promise<Id<"users"> | null> {
-  const player = await ctx.db
-    .query("players")
-    .withIndex("by_id", (q) => q.eq("_id", playerId))
-    .first();
+// async function getUserIdForPlayerId(
+//   ctx: QueryCtx,
+//   playerId: Id<"players">
+// ): Promise<Id<"users"> | null> {
+//   const player = await ctx.db
+//     .query("players")
+//     .withIndex("by_id", (q) => q.eq("_id", playerId))
+//     .first();
 
-  return player?.userId ?? null;
-}
+//   return player?.userId ?? null;
+// }
 
 // --- Queries --------------------------------------------------
 export const currentUserId = query({
@@ -77,7 +77,6 @@ export const getById = query({
 });
 
 export const getAll = query({
-  args: {},
   handler: async (ctx) => {
     return await ctx.db.query("players").collect();
   },
@@ -122,9 +121,15 @@ export const getForCurrentUser = query({
   handler: async (ctx) => {
     const userId = await retrieveCurrentUserId(ctx);
     if (!userId) {
+      console.log("UNAUTHENTICATED");
       return null;
     }
-    return await getPlayerForUserId(ctx, userId);
+    const player = await getPlayerForUserId(ctx, userId);
+    if (!player) {
+      console.log("NO PLAYER FOR USER: ", userId);
+      return null;
+    }
+    return player;
   },
 });
 

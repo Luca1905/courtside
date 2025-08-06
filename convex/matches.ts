@@ -72,7 +72,6 @@ export const getAllMatches = query({
 });
 
 export const getAllMatchesWithOpponent = query({
-  args: {},
   handler: async (ctx) => {
     const rawMatches = await ctx.db.query("matches").collect();
     const userId = await retrieveCurrentUserId(ctx);
@@ -92,9 +91,7 @@ export const getAllMatchesWithOpponent = query({
         )
       )
     );
-    return matchesWithOpponent.filter(
-      (match): match is MatchWithOpponentRecord => match !== null
-    );
+    return matchesWithOpponent.filter((match) => match !== null) ?? [];
   },
 });
 

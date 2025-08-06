@@ -1,25 +1,25 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { router } from "expo-router";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, ScrollView, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 import { z } from "zod";
-import { api } from "~/convex/_generated/api";
+import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Button } from "~/components/ui/button";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectGroup,
-  SelectLabel,
   SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 } from "~/components/ui/select";
 import { Text } from "~/components/ui/text";
-import { Portal, PortalHost } from "@rn-primitives/portal";
+import { api } from "~/convex/_generated/api";
 
 const ARM_OPTIONS = ["Left", "Right"] as const;
 const GRIP_OPTIONS = ["One-Handed", "Two-Handed"] as const;
@@ -28,8 +28,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   club: z.string().optional(),
   ranking: z
-    .number("Ranking must be a number")
-    .int("Must be an integer")
+    .float32("Ranking must be a number")
     .min(1, "Must be at least 1")
     .optional(),
   hittingArm: z.enum(ARM_OPTIONS).optional(),
@@ -50,10 +49,18 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function AddPlayerPage() {
+  const userId = useQuery(api.players.currentUserId);
+  const playerForUser = useQuery(api.players.getForCurrentUser);
+  const isLoading = playerForUser === undefined || userId === undefined;
+  const isSelf = playerForUser === null;
+
+  const [rankingDisplayValue, setRankingDisplayValue] = React.useState("");
+
   const {
     control,
     handleSubmit,
     trigger,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -70,10 +77,30 @@ export default function AddPlayerPage() {
 
   const addPlayer = useMutation(api.players.addPlayer);
 
+  if (!userId) {
+    return <Text>You are not authenticated</Text>;
+  }
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   const onSubmit = async (data: FormData) => {
     try {
+      if (!playerForUser) {
+        await addPlayer({ ...data, userId });
+      }
       await addPlayer(data);
-      Alert.alert("Success", "Player added", [
+      Alert.alert("Success", isSelf ? "Profile created" : "Player added", [
         {
           text: "OK",
           onPress: () => router.back(),
@@ -92,7 +119,15 @@ export default function AddPlayerPage() {
       showsVerticalScrollIndicator={false}
     >
       <Card className="p-6 rounded-2xl shadow-sm mb-4">
-        <Text className="text-xl font-bold mb-4">Add New Player</Text>
+        {/* Heading */}
+        <Text className="text-xl font-bold mb-2">
+          {isSelf ? "Create Your Player Profile" : "Add New Player"}
+        </Text>
+        {isSelf && (
+          <Text className="mb-4 text-sm text-gray-600">
+            Since you don’t have a player profile yet, this will represent you.
+          </Text>
+        )}
 
         {/* Name */}
         <Label className="font-semibold mb-1">Name *</Label>
@@ -136,21 +171,37 @@ export default function AddPlayerPage() {
 
         {/* Ranking */}
         <Label className="font-semibold mt-4 mb-1">Ranking</Label>
-        <Controller
-          control={control}
-          name="ranking"
-          render={({ field: { value, onChange, onBlur } }) => (
-            <Input
-              placeholder="e.g. 16 (optional)"
-              keyboardType="numeric"
-              value={value != null ? String(value) : ""}
-              onChangeText={(t) => {
-                onChange(Number(t));
-                trigger("ranking");
-              }}
-              onBlur={onBlur}
-            />
-          )}
+        <Input
+          placeholder="e.g. 16.5 (optional)"
+          keyboardType="numeric"
+          value={rankingDisplayValue}
+          onChangeText={(t) => {
+            // Replace all commas with dots and allow decimal input
+            const normalized = t.replace(",", ".");
+
+            // Update display value immediately
+            setRankingDisplayValue(normalized);
+
+            // Allow empty string, numbers, and decimal numbers
+            if (normalized === "" || /^\d*\.?\d*$/.test(normalized)) {
+              if (normalized === "") {
+                setValue("ranking", undefined);
+              } else {
+                const num = Number(normalized);
+                if (!isNaN(num)) {
+                  setValue("ranking", num);
+                }
+              }
+              trigger("ranking");
+            }
+          }}
+          onBlur={() => {
+            // Sync display value with form value on blur
+            const currentValue = control._formValues.ranking;
+            if (currentValue != null) {
+              setRankingDisplayValue(String(currentValue));
+            }
+          }}
         />
         {errors.ranking && (
           <Text className="text-destructive text-sm">
@@ -195,11 +246,6 @@ export default function AddPlayerPage() {
             {errors.hittingArm.message}
           </Text>
         )}
-        <Portal name="example-portal" hostName="example-host">
-          <View>
-            <Text>I will be rendered above the Content component</Text>
-          </View>
-        </Portal>
 
         {/* Backhand Grip */}
         <Label className="font-semibold mt-4 mb-1">Backhand Grip</Label>
@@ -241,14 +287,24 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="playingSince"
-          render={({ field: { value, onChange, onBlur } }) => (
+          render={({ field: { value, onBlur } }) => (
             <Input
               placeholder="Year (optional)"
               keyboardType="numeric"
               value={value != null ? String(value) : ""}
               onChangeText={(t) => {
-                onChange(Number(t));
-                trigger("ranking");
+                // Only allow integers
+                if (t === "" || /^\d+$/.test(t)) {
+                  if (t === "") {
+                    setValue("playingSince", undefined);
+                  } else {
+                    const num = Number(t);
+                    if (!isNaN(num)) {
+                      setValue("playingSince", num);
+                    }
+                  }
+                  trigger("playingSince");
+                }
               }}
               onBlur={onBlur}
             />
@@ -265,14 +321,24 @@ export default function AddPlayerPage() {
         <Controller
           control={control}
           name="birthYear"
-          render={({ field: { value, onChange, onBlur } }) => (
+          render={({ field: { value, onBlur } }) => (
             <Input
               placeholder="Year (optional)"
               keyboardType="numeric"
               value={value != null ? String(value) : ""}
               onChangeText={(t) => {
-                onChange(Number(t));
-                trigger("ranking");
+                // Only allow integers
+                if (t === "" || /^\d+$/.test(t)) {
+                  if (t === "") {
+                    setValue("birthYear", undefined);
+                  } else {
+                    const num = Number(t);
+                    if (!isNaN(num)) {
+                      setValue("birthYear", num);
+                    }
+                  }
+                  trigger("birthYear");
+                }
               }}
               onBlur={onBlur}
             />
@@ -291,11 +357,16 @@ export default function AddPlayerPage() {
           className="mt-8 rounded-full shadow-md bg-green-600"
         >
           <Text className="text-primary-foreground font-bold">
-            {isSubmitting ? "Adding…" : "Add Player"}
+            {isSubmitting
+              ? isSelf
+                ? "Creating…"
+                : "Adding…"
+              : isSelf
+                ? "Create Profile"
+                : "Add Player"}
           </Text>
         </Button>
       </Card>
-      <PortalHost name="test-host" />
     </ScrollView>
   );
 }

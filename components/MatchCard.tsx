@@ -1,9 +1,12 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useQuery } from "convex/react";
 import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
+import { api } from "~/convex/_generated/api";
 import type { MatchWithOpponentRecord } from "~/convex/matches";
 import { Calendar } from "~/lib/icons/Calendar";
 import { Clock } from "~/lib/icons/Clock";
@@ -30,7 +33,32 @@ const formatDuration = (min: number) =>
 export function MatchCard({ match }: MatchCardProps) {
   const router = useRouter();
 
-  const won = match.winner === match.playerTeam;
+  const playerForUser = useQuery(api.players.getForCurrentUser);
+
+  if (playerForUser === undefined) {
+    return null;
+  }
+
+  if (playerForUser === null) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+        <Text className="text-lg text-gray-500 mb-4">
+          You are not authenticated
+        </Text>
+        <Pressable
+          onPress={() => router.replace("/welcome")}
+          className="bg-green-600 px-4 py-2 rounded"
+        >
+          <Text className="text-white text-base">Go Back</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
+
+  const playerTeam =
+    playerForUser._id === match.players.guest ? "Guest" : "Home";
+  const won = match.winner === playerTeam;
+
   return (
     <Pressable
       onPress={() => router.navigate(`/match/${match._id}`)}
@@ -131,7 +159,7 @@ export function MatchCard({ match }: MatchCardProps) {
                     won ? "text-green-700" : "text-red-700"
                   )}
                 >
-                  {formatMatchScore(match.sets, match.playerTeam)}
+                  {formatMatchScore(match.sets, playerTeam)}
                 </Text>
                 <Text
                   className={cn(

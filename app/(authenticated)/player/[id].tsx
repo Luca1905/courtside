@@ -1,23 +1,24 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, SafeAreaView, ScrollView, View } from "react-native";
-import { Text } from "~/components/ui/text";
-import { Card } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LineChart } from "react-native-chart-kit";
 import { MatchCard } from "~/components/MatchCard";
-import { ArrowUp, ArrowDown } from "~/lib/icons/Arrow";
-import { cn } from "~/lib/utils";
-import type { Id } from "~/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "~/convex/_generated/api";
-import type { MaterialCommunityIconNames } from "~/lib/icons/definitions";
 import PlayerScreenSkeleton from "~/components/PlayerScreenSkeleton";
+import { Badge } from "~/components/ui/badge";
+import { Card } from "~/components/ui/card";
+import { Text } from "~/components/ui/text";
+import { api } from "~/convex/_generated/api";
+import type { Id } from "~/convex/_generated/dataModel";
+import { ArrowDown, ArrowUp } from "~/lib/icons/Arrow";
+import type { MaterialCommunityIconNames } from "~/lib/icons/definitions";
+import { cn } from "~/lib/utils";
 
 export default function PlayerDetailsPage() {
   const router = useRouter();
   const { id: playerId } = useLocalSearchParams();
 
+  const userPlayer = useQuery(api.players.getForCurrentUser);
   const player = useQuery(
     api.players.getById,
     typeof playerId === "string"
@@ -37,9 +38,9 @@ export default function PlayerDetailsPage() {
   );
 
   const matches = useQuery(
-    api.matches.getMatchesAgainstOpponent,
+    api.matches.getMatchesAgainstPlayer,
     typeof playerId === "string"
-      ? { opponentId: playerId as Id<"players"> }
+      ? { playerId: playerId as Id<"players"> }
       : "skip"
   );
 

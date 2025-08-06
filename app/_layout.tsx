@@ -212,7 +212,7 @@ function RootNavigator() {
         }
       </Stack.Protected>
       <Stack.Protected guard={!isAuthenticated}>
-        <Stack.Screen name="welcome" />
+        <Stack.Screen name="welcome" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );

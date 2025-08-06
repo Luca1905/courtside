@@ -132,6 +132,7 @@ export default function AddMatchPage() {
 
   const addMatch = useMutation(api.matches.addMatch);
   const opponents = useQuery(api.players.getAll);
+  const playerForUser = useQuery(api.players.getForCurrentUser);
   const watched = watch();
   const selectedOpponent = opponents?.find((o) => o._id === watched.opponentId);
   const durationLabel = useDuration(watched.startTime, watched.endTime);
@@ -160,6 +161,10 @@ export default function AddMatchPage() {
     screenHeight - (insets.top + insets.bottom) - 100
   );
 
+  if (!playerForUser) {
+    return <Text>Not Authenticated</Text>;
+  }
+
   const handleSelectOpponent = (o: Doc<"players">) => {
     setValue("opponentId", o._id);
     setShowOpponentPicker(false);
@@ -183,7 +188,16 @@ export default function AddMatchPage() {
       addMatch({
         ...data,
         date: data.date.toISOString(),
-        opponentId: data.opponentId as Id<"players">,
+        players: {
+          guest:
+            data.playerTeam === "Guest"
+              ? playerForUser._id
+              : (data.opponentId as Id<"players">),
+          home:
+            data.playerTeam === "Home"
+              ? playerForUser._id
+              : (data.opponentId as Id<"players">),
+        },
         startTime: data.startTime.getTime(),
         endTime: data.endTime.getTime(),
         winner,
