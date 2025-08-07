@@ -128,10 +128,6 @@ function RootNavigator() {
                     </Link>
                   ),
                 };
-              case "map":
-                return {
-                  headerShown: false,
-                };
               default:
                 return {};
             }
