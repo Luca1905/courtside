@@ -128,6 +128,11 @@ function RootNavigator() {
                     </Link>
                   ),
                 };
+              case "profile":
+                return {
+                  headerShown: true,
+                  headerTitle: "Profile",
+                };
               default:
                 return {};
             }

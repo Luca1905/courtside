@@ -2,13 +2,16 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Tabs } from "expo-router";
 
 import React from "react";
+import type { MaterialCommunityIconNames } from "~/lib/icons/definitions";
 
-function getIconNameByRoute(route: string) {
+function getIconNameByRoute(route: string): MaterialCommunityIconNames {
   switch (route) {
     case "index":
       return "history";
     case "players":
       return "account-group";
+    case "profile":
+      return "account";
     default:
       return "progress-question";
   }
