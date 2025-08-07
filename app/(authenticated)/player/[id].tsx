@@ -19,45 +19,60 @@ export default function PlayerDetailsPage() {
   const { id: playerId } = useLocalSearchParams();
 
   const userPlayer = useQuery(api.players.getForCurrentUser);
+
   const player = useQuery(
     api.players.getById,
     typeof playerId === "string"
-      ? {
-          playerId: playerId as Id<"players">,
-        }
+      ? { playerId: playerId as Id<"players"> }
       : "skip"
   );
 
   const playerStats = useQuery(
     api.stats.getPlayerStats,
     typeof playerId === "string"
-      ? {
-          playerId: playerId as Id<"players">,
-        }
-      : "skip"
-  );
-
-  const matches = useQuery(
-    api.matches.getMatchesAgainstPlayer,
-    typeof playerId === "string"
       ? { playerId: playerId as Id<"players"> }
       : "skip"
   );
 
-  // // TODO: Loading state
-  if (
+  const isOwnProfile =
+    userPlayer !== undefined &&
+    player !== undefined &&
+    userPlayer !== null &&
+    player !== null &&
+    userPlayer._id === player._id;
+
+  // Only fetch matches if it's NOT your own profile
+  const shouldFetchMatches =
+    typeof playerId === "string" &&
+    userPlayer !== undefined &&
+    player !== undefined &&
+    userPlayer !== null &&
+    player !== null &&
+    userPlayer._id !== player._id;
+
+  const matches = useQuery(
+    api.matches.getMatchesAgainstPlayer,
+    shouldFetchMatches ? { playerId: playerId as Id<"players"> } : "skip"
+  );
+
+  const isLoading =
     player === undefined ||
     playerStats === undefined ||
-    matches === undefined
-  ) {
+    (shouldFetchMatches && matches === undefined);
+
+  if (isLoading) {
     return <PlayerScreenSkeleton />;
   }
 
-  // No match found
-  if (player === null || playerStats === null || matches === null) {
+  const isNotFound =
+    player === null ||
+    playerStats === null ||
+    (shouldFetchMatches && matches === null);
+
+  if (isNotFound) {
     return (
       <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-        <Text className="text-lg text-gray-500 mb-4">player not found</Text>
+        <Text className="text-lg text-gray-500 mb-4">Player not found</Text>
         <Pressable
           onPress={() => router.back()}
           className="bg-green-600 px-4 py-2 rounded"
@@ -79,15 +94,12 @@ export default function PlayerDetailsPage() {
     trend: number;
     suffix?: string;
   }) => {
-    // decide color: green for >0, red for <0, gray for ===0
     const trendColor =
       trend > 0
         ? "text-green-500"
         : trend < 0
           ? "text-red-500"
           : "text-gray-500";
-
-    // pick icon: up or down (we’ll render down in gray for zero)
     const TrendIcon = trend > 0 ? ArrowUp : ArrowDown;
 
     return (
@@ -141,6 +153,7 @@ export default function PlayerDetailsPage() {
       <Stack.Screen
         options={{
           headerLargeTitle: true,
+          title: isOwnProfile ? "Your Profile" : player.name,
         }}
       />
 
@@ -150,10 +163,9 @@ export default function PlayerDetailsPage() {
           showsVerticalScrollIndicator={false}
           contentContainerClassName="p-2 pb-16"
         >
+          {/* Player Profile Card */}
           <View className="p-4">
-            {/* Player Profile Card */}
             <Card>
-              {/* Header with Ranking */}
               <View className="bg-primary/10 p-4 border-b border-border">
                 <View className="flex-row justify-between items-center">
                   <View>
@@ -163,6 +175,13 @@ export default function PlayerDetailsPage() {
                     <Text className="text-base text-muted-foreground mt-1">
                       {player.club}
                     </Text>
+                    {isOwnProfile && (
+                      <Badge className="mt-2 bg-blue-600">
+                        <Text className="text-xs font-medium text-blue-50">
+                          Your Profile
+                        </Text>
+                      </Badge>
+                    )}
                   </View>
                   <Badge className="bg-primary px-3 py-1.5">
                     <Text className="text-lg font-bold text-primary-foreground">
@@ -204,7 +223,9 @@ export default function PlayerDetailsPage() {
                       label="Age"
                       value={
                         player.birthYear
-                          ? `${new Date().getFullYear() - player.birthYear} years`
+                          ? `${
+                              new Date().getFullYear() - player.birthYear
+                            } years`
                           : undefined
                       }
                     />
@@ -214,7 +235,7 @@ export default function PlayerDetailsPage() {
             </Card>
           </View>
 
-          {/* Stats Section */}
+          {/* Performance Stats */}
           <View className="px-4">
             <Text className="text-lg font-bold text-foreground mb-3">
               Performance Stats
@@ -247,7 +268,7 @@ export default function PlayerDetailsPage() {
             </View>
           </View>
 
-          {/* Stats Chart */}
+          {/* Performance Trends Chart */}
           <View className="px-4 mb-6">
             <Text className="text-lg font-bold text-foreground mb-3">
               Performance Trends
@@ -271,28 +292,25 @@ export default function PlayerDetailsPage() {
                   backgroundGradientTo: "#ffffff",
                   decimalPlaces: 0,
                   color: (opacity = 1) => `rgba(34, 197, 94, ${opacity})`,
-                  style: {
-                    borderRadius: 16,
-                  },
+                  style: { borderRadius: 16 },
                 }}
                 bezier
-                style={{
-                  marginVertical: 8,
-                  borderRadius: 16,
-                }}
+                style={{ marginVertical: 8, borderRadius: 16 }}
               />
             </Card>
           </View>
 
-          {/* Match History */}
-          <View className="px-1 mb-6">
-            <Text className="text-lg font-bold text-foreground mb-3">
-              Recent Matches
-            </Text>
-            {matches.map((match) => (
-              <MatchCard key={match._id} match={match} />
-            ))}
-          </View>
+          {/* Recent Matches: only if not your own profile */}
+          {shouldFetchMatches && matches && (
+            <View className="px-1 mb-6">
+              <Text className="text-lg font-bold text-foreground mb-3">
+                Recent Matches
+              </Text>
+              {matches.map((match) => (
+                <MatchCard key={match._id} match={match} />
+              ))}
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </>
