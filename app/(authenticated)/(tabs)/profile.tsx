@@ -10,7 +10,7 @@ export default function Profile() {
 
   useEffect(() => {
     router.setParams({ id: playerId?._id });
-  }, [playerId]);
+  }, [router, playerId]);
 
   return <PlayerDetailsPage />;
 }

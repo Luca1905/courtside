@@ -186,7 +186,10 @@ export default function AddMatchPage() {
       }
 
       addMatch({
-        ...data,
+        sets: data.sets,
+        surface: data.surface,
+        type: data.type,
+        venue: data.venue,
         date: data.date.toISOString(),
         players: {
           guest:
