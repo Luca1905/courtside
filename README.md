@@ -10,6 +10,9 @@ An Expo project by [Luca1905](https://github.com/Luca1905).
 
 About the tech stack:
 - Frontend: React Native / Expo
+    - Styling: NativeWind
+    - Components: React Native Reusables
+    - Router: Expo router
 - Backend: Convex
 - Auth: Anonymous auth by Convex Auth
 - Hosting Service: EAS by expo for building and deploying
@@ -21,6 +24,7 @@ About the tech stack:
 - Custom user profile
 - Overview of your match history, including score, weather, venue etc.
 - Overview of players, shared
+- Small addons: Quick Actions (long press app icon in homescreen)
 
 ## Getting Started
 
