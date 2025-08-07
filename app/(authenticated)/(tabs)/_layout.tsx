@@ -9,8 +9,6 @@ function getIconNameByRoute(route: string) {
       return "history";
     case "players":
       return "account-group";
-    case "map":
-      return "map";
     default:
       return "progress-question";
   }
@@ -44,12 +42,6 @@ export default function TabLayout() {
         name="players"
         options={{
           title: "Players",
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "Map",
         }}
       />
     </Tabs>
