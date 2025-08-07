@@ -98,8 +98,9 @@ export default function AddPlayerPage() {
     try {
       if (!playerForUser) {
         await addPlayer({ ...data, userId });
+      } else {
+        await addPlayer(data);
       }
-      await addPlayer(data);
       Alert.alert("Success", isSelf ? "Profile created" : "Player added", [
         {
           text: "OK",
